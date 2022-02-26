@@ -1,0 +1,257 @@
+version: "3.9"
+
+volumes:
+  movies:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /films
+
+  series:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tv
+
+  downloads:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /downloads
+
+  documentaries:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /documentaries
+
+  music:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /music
+
+networks: 
+  vpnnet: 
+    driver: bridge
+
+services:
+
+  vpn:
+    container_name: vpn
+    image: dperson/openvpn-client:latest
+    cap_add:
+      - net_admin # required to modify network interfaces
+    restart: unless-stopped
+    volumes:
+      - /dev/net:/dev/net:z # tun device
+      - ./config/vpn:/vpn # OpenVPN configuration
+    security_opt:
+      - label:disable
+    ports:
+      - 8112:8112 # deluge webui 
+      - 55555:55555 # deluge thin-client
+      - 3128:3128 # squid
+      - 8118:8118 # privoxy
+      - 6881:6881/udp # bittorrent
+      - 9091:9091 # transmission webui 
+      - 51413:51413 # transmission thin-client
+      - 9117:9117 # jacket
+      - 7878:7878 # radarr
+      - 7879:7879 # documentaries
+      - 8989:8989 # sonarr
+      - 8090:80 # organizr
+      - 8686:8686 # lidarr
+    networks:
+      - vpnnet
+    command: '-f "" -d -r 192.168.0.0/24' # enable firewall and route local network traffic
+
+  deluge:
+    container_name: deluge
+    image: deluge
+    restart: unless-stopped
+    network_mode: service:vpn # run on the vpn network
+    build:
+      context: ./config/deluge
+    env_file: .env
+    volumes:
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
+      - movies:/movies # tv shows folder
+      - documentaries:/documentaries # documentaries
+      - music:/music # music
+      - ./config/deluge:/config # config files
+
+  jackett:
+    container_name: jackett
+    image: linuxserver/jackett:latest
+    restart: unless-stopped
+    network_mode: service:vpn # run on host network namespace
+    env_file: .env
+    volumes:
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
+      - movies:/movies # tv shows folder
+      - documentaries:/documentaries # documentaries
+      - music:/music # music
+      - ./config/jackett:/config # config files
+
+  sonarr:
+    container_name: sonarr
+    image: linuxserver/sonarr:develop
+    restart: unless-stopped
+    network_mode: service:vpn # run on host network namespace
+    env_file: .env
+    volumes:
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
+      - movies:/movies # tv shows folder
+      - documentaries:/documentaries # documentaries
+      - music:/music # music
+      - ./config/sonarr:/config # config files
+
+  radarr:
+    container_name: radarr
+    image: linuxserver/radarr:nightly
+    restart: unless-stopped
+    network_mode: service:vpn # run on host network namespace
+    env_file: .env
+    volumes:
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
+      - movies:/movies # tv shows folder
+      - documentaries:/documentaries # documentaries
+      - music:/music # music
+      - ./config/radarr:/config # config files
+
+  documentaries:
+    container_name: documentaries
+    image: linuxserver/radarr:nightly
+    restart: unless-stopped
+    network_mode: service:vpn # run on host network namespace
+    env_file: .env
+    volumes:
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
+      - movies:/movies # tv shows folder
+      - documentaries:/documentaries # documentaries
+      - music:/music # music
+      - ./config/documentaries:/config # config files
+  
+  privoxy:
+    container_name: privoxy
+    image: ajoergensen/privoxy:latest
+    restart: unless-stopped
+    network_mode: service:vpn # run on the vpn network
+    env_file: .env
+    volumes:
+      - ./config/privoxy:/etc/privoxy # config files
+
+  squid:
+    container_name: squid
+    image: minimum2scp/squid:latest
+    restart: unless-stopped
+    network_mode: service:vpn # run on the vpn network
+    env_file: .env
+    volumes:
+      - ./config/squid/logs:/var/log/squid # config files
+      - ./config/squid/cache:/var/cache/squid # config files
+      - ./config/squid/:/etc/squid # config files
+
+  organizr:
+    container_name: organizr
+    image: organizr/organizr
+    restart: unless-stopped
+    network_mode: service:vpn # run on host network namespace
+    env_file: .env
+    volumes:
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
+      - movies:/movies # tv shows folder
+      - documentaries:/documentaries # documentaries
+      - music:/music # music
+      - ./config/organizr:/config # config files
+      
+  lidarr:
+    container_name: lidarr
+    image: lscr.io/linuxserver/lidarr
+    env_file: .env
+    network_mode: service:vpn # run on host network namespace
+    volumes:
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
+      - movies:/movies # tv shows folder
+      - documentaries:/documentaries # documentaries
+      - music:/music # music
+      - ./config/lidarr:/config
+    restart: unless-stopped
+    
+  traktarr:
+    container_name: traktarr
+    image: traktarr
+    env_file: .env
+    build:
+      context: ./config/traktarr
+    network_mode: service:vpn # run on host network namespace
+    volumes:
+      - ./config/traktarr:/traktarr
+      - ./config/traktarr/config:/config
+    restart: unless-stopped
+    
+#  plex:
+#    container_name: plex
+#    image: linuxserver/plex:latest
+#    restart: unless-stopped
+#    network_mode: host # run on host network namespace
+#    env_file: .env
+#    volumes:
+#      - ./config/plex:/config # config files
+#      - series:/tv # series
+#      - films:/movies # films
+
+#  rutorrent:
+#    container_name: rutorrent
+#    image: linuxserver/rutorrent:latest
+#    restart: unless-stopped
+#    network_mode: service:vpn # run on the vpn network
+#    env_file: .env
+#    volumes:
+#      - downloads:/downloads # downloads folder
+#      - ./config/rutorrent:/config # config files
+
+#  calibre:
+#    container_name: calibre
+#    image: ghcr.io/linuxserver/calibre
+#    restart: unless-stopped
+#    network_mode: host # run on host network namespace
+#    environment:
+#      - PUID=1000
+#      - PGID=1000
+#      - TZ=Europe/London
+#      - GUAC_USER=abc #optional
+#      - GUAC_PASS=900150983cd24fb0d6963f7d28e17f72 #optional
+#      - UMASK_SET=022 #optional
+#      - CLI_ARGS= #optional
+#    volumes:
+#      - ./config/calibre:/config
+#    ports:
+#      - 8080:8080
+#      - 8081:8081
+#    restart: unless-stopped
+
+#  transmission:
+#    image: linuxserver/transmission
+#    container_name: transmission
+#    restart: unless-stopped
+#    network_mode: service:vpn # run on the vpn network
+#    env_file: .env
+#    volumes:
+#      - downloads:/downloads # downloads folder
+#      - series:/tv # tv shows folder
+#      - movies:/movies # tv shows folder
+#      - ./config/transmission:/config # config files

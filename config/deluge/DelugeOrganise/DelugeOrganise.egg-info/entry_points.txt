@@ -1,0 +1,8 @@
+
+    [deluge.plugin.core]
+    DelugeOrganise = deluge_delugeorganise:CorePlugin
+    [deluge.plugin.gtk3ui]
+    DelugeOrganise = deluge_delugeorganise:Gtk3UIPlugin
+    [deluge.plugin.web]
+    DelugeOrganise = deluge_delugeorganise:WebUIPlugin
+    

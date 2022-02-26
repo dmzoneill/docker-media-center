@@ -1,0 +1,106 @@
+#!/bin/bash -x
+
+SEP="==================================================================================================\n"
+sonarSocket="127.0.0.7:8989"
+sonarKey="$SONARR_KEY"
+torrentid=$1
+torrentname=$2
+torrentpath=$3
+
+if [ "$torrentid" == "" ]; then
+  if [ ! -f "failed.log" ]; then
+    /usr/bin/touch failed.log
+  fi
+  /bin/echo "Failed: $torrentid $torrentname $torrentpath" >> failed.log
+  exit 1
+fi
+
+unsortedFormat="/downloads/unsorted/{file.name}"
+seriesFormat="/tv/{n}/{'Season '+s}/{n} - {sxe} - {t}"
+movieFormat="/movies/{n} ({y})/{n} ({y})"
+
+amclog="/config/logs/amc.log"
+amcexclude="/config/logs/amc.txt"
+logfile="/config/logs/organise-$torrentid.log"
+
+/bin/echo -e "Login to deluge" > $logfile
+/bin/echo -e "===============\n" >> $logfile
+curl -c cookies.txt --compressed -i -H "Content-Type: application/json" -H "Accept: application/json" -X POST -d "{\"method\": \"auth.login\", \"params\": [\"$DELUGE_PASSWORD\"], \"id\": 1}" http://127.0.0.1:8112/json >/dev/null 2>&1
+
+/bin/echo -e "\n" >> $logfile
+/bin/echo -e "Connect to deluge web" >> $logfile
+/bin/echo -e "=====================\n" >> $logfile
+/usr/bin/curl -v -b /config/cookies.txt --compressed -i -H "Content-Type: application/json" -H "Accept: application/json" -d '{"method": "web.connected", "params": [], "id": 1}' http://127.0.0.1:8112/json >> $logfile 2>&1
+
+/bin/echo -e "\n" >> $logfile
+/bin/echo -e "Get torrent label" >> $logfile
+/bin/echo -e "=================\n" >> $logfile
+torrentlabel=$(curl -v -b /config/cookies.txt --compressed -i -H "Content-Type: application/json" -H "Accept: application/json" -d '{"method": "core.get_torrent_status", "params": ["'$torrentid'",["label"]], "id": 1}' http://127.0.0.1:8112/json | awk -F\" '{print $6}' | tail -n 1 | tr -d '\n')
+/bin/echo -e "Label: $torrentlabel" >> $logfile
+
+/bin/echo -e "\n" >> $logfile
+/bin/echo -e "$SEP" >> $logfile
+/bin/echo -e "Torrent Details: $torrentname $torrentpath $torrentid $torrentlabel\n" >> $logfile
+
+/bin/cp -rvf "/config/state/$torrentid.torrent" "/config/seedmage/torrents/" >> $logfile
+/bin/echo "cp -rvf \"/config/state/$torrentid.torrent\" \"/config/seedmage/torrents/\"" >> $logfile 
+
+export HOME=/config
+
+/bin/echo -e "Filebot" >> $logfile
+/bin/echo -e "=======\n" >> $logfile
+
+mkdir -vp /downloads/work >> $logfile
+/bin/cp -rvf "$torrentpath/$torrentname" "$torrentpath/work/$torrentname" >> $logfile
+
+
+if [ "$torrentlabel" == "tv-sonarr" ]; then
+  defs="ut_label=TV"
+  /bin/echo "filebot tv-sonarr" >> $logfile 2>&1
+  /usr/bin/filebot -script fn:amc --output="/tv" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" seriesFormat="$seriesFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs >> $logfile 2>&1
+elif [ "$torrentlabel" == "radarr" ]; then
+  defs="ut_label=Movie"
+  /bin/echo "filebot radarr" >> $logfile 2>&1
+  /usr/bin/filebot -script fn:amc --output="/movies" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs >> $logfile 2>&1
+elif [ "$torrentlabel" == "skip" ]; then
+  defs=""
+  /bin/echo "filebot unknown" >> $logfile 2>&1
+  /usr/bin/filebot -script fn:amc --output="/downloads" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" seriesFormat="$seriesFormat" unsortedFormat="$unsortedFormat" unsorted=y subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs >> $logfile 2>&1
+fi
+
+/bin/grep "\[COPY\]" $logfile >/dev/null 2>&1
+
+if [ "$?" == "0" ]; then
+  if [ "$torrentlabel" == "tv-sonarr" ]; then
+    /usr/bin/curl -v http://$sonarSocket/api/command -d '{"name": "RescanSeries"}' --header "X-Api-Key:$sonarKey" >> $logfile 2>&1
+  else
+    /bin/echo ""
+  fi
+fi
+
+/bin/echo -e "\n" >> $logfile
+/bin/echo -e "Deleting old torrents" >> $logfile
+/bin/echo -e "=====================\n" >> $logfile
+/usr/bin/timeout 30 bash /config/delete_old.sh >> $logfile
+
+/bin/echo -e "\n" >> $logfile
+/bin/echo -e "Pausing public tracker seeding torrents" >> $logfile
+/bin/echo -e "=======================================\n" >> $logfile
+/usr/bin/timeout 30 bash /config/pause_completed_public_tracker.sh $torrentid >> $logfile
+/usr/bin/timeout 30 bash /config/pause_completed_public_tracker.sh >> $logfile
+
+/bin/echo -e "\n" >> $logfile
+/bin/echo -e "$SEP" >> $logfile
+
+/bin/chmod 666 $logfile >> $logfile
+
+/bin/chown -R abc:abc /downloads/* >> $logfile
+/bin/chown -R abc:abc /config/* >> $logfile
+
+/bin/rm /config/*.bak  >> $logfile
+
+/bin/rm -rvf "$torrentpath/work/$torrentname" >> $logfile
+
+/usr/bin/killall -9 curl
+
+exit 0
