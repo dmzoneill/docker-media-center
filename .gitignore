@@ -34,3 +34,7 @@
 **/DataProtection/**
 **/asp/key**
 **/torrents/**
+**/.filebot/**
+**/.bash_history
+**/.cache/**
+**/.java/**

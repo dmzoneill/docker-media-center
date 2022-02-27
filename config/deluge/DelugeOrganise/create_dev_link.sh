@@ -1,6 +1,6 @@
 #!/bin/bash
 BASEDIR=$(cd `dirname $0` && pwd)
-CONFIG_DIR=$( test -z $1 && echo "/home/dave/.config/deluge" || echo "$1")
+CONFIG_DIR=$( test -z $1 && echo "~/.config/deluge" || echo "$1")
 [ -d "$CONFIG_DIR/plugins" ] || echo "Config dir "$CONFIG_DIR" is either not a directory or is not a proper deluge config directory. Exiting"
 [ -d "$CONFIG_DIR/plugins" ] || exit 1
 cd $BASEDIR

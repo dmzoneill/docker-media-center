@@ -81,10 +81,9 @@ class OrganiseMenu(MenuItem):
 
     def clear_logfile(self, arr):
         logging.debug('truncate log')
-        foo = open("/home/dave/src/docker-media-center/config/deluge/logs/organise-" + arr['hash'] + ".log", "w+")
-        foo.truncate()
-        foo.flush()
-        foo.close()
+        cmd="echo '' > /config/deluge/logs/organise-" + arr['hash'] + ".log"
+        docker_cmd = r"docker exec -it deluge sh -c \"{cmd}\"".format(cmd=cmd)
+        os.system(docker_cmd)
 
     def on_clear_logfile(self, widget=None):
         logging.debug('organise on_clear_logfile')

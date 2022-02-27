@@ -1,0 +1,7 @@
+pyarr
+IMDbPY
+requests
+youtube-search-python
+eyed3
+deluge_client
+ffmpeg

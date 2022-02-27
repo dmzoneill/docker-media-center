@@ -6,7 +6,9 @@ RUN curl -fsSL https://raw.githubusercontent.com/filebot/plugins/master/installe
 RUN sed 's/sudo //g' -i /tmp/deb.sh
 RUN sed 's/apt-get/DEBIAN_FRONTEND=noninteractive apt-get -y/g' -i /tmp/deb.sh
 RUN bash /tmp/deb.sh
+RUN chsh -s /bin/bash abc
+RUN rm -f /tmp/deb.sh
+RUN pip3 install requests pycurl
 COPY filebot.psm /tmp
 RUN filebot --license /tmp/filebot.psm
 RUN rm -f /tmp/filebot.psm
-RUN pip3 install requests pycurl

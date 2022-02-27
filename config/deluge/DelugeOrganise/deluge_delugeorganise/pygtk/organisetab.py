@@ -18,13 +18,10 @@ import logging
 
 from gi.repository import Gtk
 
-import deluge
 from deluge import component
-from deluge.plugins.pluginbase import Gtk3PluginBase
-from deluge.ui.client import client
 from deluge.ui.gtk3.torrentdetails import Tab
 from gi.repository import Pango
-import re
+import os
 
 from ..common import get_resource
 
@@ -70,7 +67,8 @@ class DelugeOrganiseTab(Tab):
             self.textbuffer1.set_text("eh no!")
             return
 
-        thefile = "/home/dave/src/docker-media-center/config/deluge/logs/organise-" + selected + ".log"
+        path = os.path.dirname(os.path.realpath(__file__)).replace("/DelugeOrganise/deluge_delugeorganise/pygtk", "")
+        thefile = path + "/logs/organise-" + selected + ".log"
 
         logging.debug('updating 2')
         all_of_it = ""
@@ -83,6 +81,8 @@ class DelugeOrganiseTab(Tab):
         except IOError:
             self.textbuffer1.set_text("Could not open file! " + thefile)
             return
+
+        all_of_it = all_of_it
 
         logging.debug('updating 3')
         self.textbuffer1.set_text(all_of_it)

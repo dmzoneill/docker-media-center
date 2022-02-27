@@ -1,11 +1,12 @@
 #!/bin/bash -x
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 torrentid=$1
 
-if [ -d "/home/dave/src/docker-media-center/config/deluge/" ]; then
-   cd /home/dave/src/docker-media-center/config/deluge/
+if [ -d "/config" ]; then
+   cd /config
 else
-  cd /config
+  cd $SCRIPT_DIR
 fi
 
 curl -c cookies.txt --compressed -i -H "Content-Type: application/json" -H "Accept: application/json" -X POST -d "{\"method\": \"auth.login\", \"params\": [\"$DELUGE_PASSWORD\"], \"id\": 1}" http://127.0.0.1:8112/json

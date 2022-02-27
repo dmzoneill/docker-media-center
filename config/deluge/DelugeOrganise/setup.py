@@ -12,9 +12,9 @@ __plugin_name__ = 'DelugeOrganise'
 __author__ = 'David'
 __author_email__ = 'dmz.oneill@gmail.com'
 __version__ = '0.1'
-__url__ = ''
+__url__ = 'https://github.com/dmzoneill/docker-media-center'
 __license__ = 'GPLv3'
-__description__ = ''
+__description__ = 'Filebot interface to deluge downloads'
 __long_description__ = """"""
 __pkg_data__ = {'deluge_'+__plugin_name__.lower(): ['data/*']}
 

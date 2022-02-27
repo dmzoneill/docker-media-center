@@ -2,9 +2,9 @@ Metadata-Version: 1.0
 Name: DelugeOrganise
 Version: 0.1
 Summary: UNKNOWN
-Home-page: UNKNOWN
+Home-page: https://github.com/dmzoneill/docker-media-center
 Author: David
 Author-email: dmz.oneill@gmail.com
 License: GPLv3
-Description: UNKNOWN
+Description: Filebot interface to deluge downloads
 Platform: UNKNOWN

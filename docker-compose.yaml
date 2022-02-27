@@ -191,6 +191,20 @@ services:
       - ./config/lidarr:/config
     restart: unless-stopped
     
+  plex:
+    container_name: plex
+    image: linuxserver/plex:latest
+    restart: unless-stopped
+    network_mode: host # run on host network namespace
+    env_file: .env
+    volumes:
+      - ./config/plex:/config # config files
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
+      - movies:/movies # tv shows folder
+      - documentaries:/documentaries # documentaries
+      - music:/music # music
+
   traktarr:
     container_name: traktarr
     image: traktarr
@@ -203,26 +217,23 @@ services:
       - ./config/traktarr/config:/config
     restart: unless-stopped
     
-#  plex:
-#    container_name: plex
-#    image: linuxserver/plex:latest
-#    restart: unless-stopped
-#    network_mode: host # run on host network namespace
-#    env_file: .env
-#    volumes:
-#      - ./config/plex:/config # config files
-#      - series:/tv # series
-#      - films:/movies # films
-
-#  rutorrent:
-#    container_name: rutorrent
-#    image: linuxserver/rutorrent:latest
-#    restart: unless-stopped
-#    network_mode: service:vpn # run on the vpn network
-#    env_file: .env
-#    volumes:
-#      - downloads:/downloads # downloads folder
-#      - ./config/rutorrent:/config # config files
+  tools:
+    container_name: tools
+    image: tools
+    env_file: .env
+    build:
+      context: ./config/tools
+    network_mode: service:vpn # run on host network namespace
+    volumes:
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
+      - movies:/movies # tv shows folder
+      - documentaries:/documentaries # documentaries
+      - music:/music # music
+      - ./config/tools:/tools
+      - ~/.local/share/gvfs-metadata:/root/.local/share/gvfs-metadata
+      - ~/.cache/thumbnails:/root/.cache/thumbnails   
+    restart: unless-stopped
 
 #  calibre:
 #    container_name: calibre
@@ -255,3 +266,13 @@ services:
 #      - series:/tv # tv shows folder
 #      - movies:/movies # tv shows folder
 #      - ./config/transmission:/config # config files
+
+#  rutorrent:
+#    container_name: rutorrent
+#    image: linuxserver/rutorrent:latest
+#    restart: unless-stopped
+#    network_mode: service:vpn # run on the vpn network
+#    env_file: .env
+#    volumes:
+#      - downloads:/downloads # downloads folder
+#      - ./config/rutorrent:/config # config files

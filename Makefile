@@ -1,19 +1,35 @@
-.PHONY: build up down check clean backup-diff backup-config update-config reset seedmage-reset seedmage-attach
+.PHONY: build build-images up down check clean clean-mounts backup-diff backup-config update-config reset seedmage-reset seedmage-attach
 
 SHELL := /bin/bash
+CWD := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-build:
+clean-mounts:
+	{ \
+		for X in `mount | grep merged | awk '{print $3}'`; do \
+			sudo umount $$X; \
+		done \
+	}
+
+build-images:
 	- cp sensitive/filebot.psm config/deluge/
+	- cp sensitive/filebot.psm config/tools/
 	- docker-compose build
 	- rm -f config/deluge/filebot.psm
+	- rm -f config/tools/filebot.psm
+
+build: build-images clean-mounts
 
 up: build
 	- cp sensitive/.env .env
-	cp -f sensitive/vpn.conf config/vpn/
+	cp -vf sensitive/Indexers/* ./config/jackett/Jackett/Indexers/
+	cp -vf sensitive/vpn.conf config/vpn/
 	docker-compose up -d
 	docker exec -it vpn /vpn/port-forward.sh
 	docker exec -it deluge /config/seedmage/seedmage.sh
 	- cp sensitive/.env.template .env
+	- cp sensitive/filebot.psm config/deluge/
+	- docker exec -it deluge su abc -c "filebot --license /config/filebot.psm"
+	- rm -f config/deluge/filebot.psm
 
 down: 
 	docker-compose down
@@ -27,7 +43,7 @@ clean: down
 	- rm -rvf config/deluge/.java
 	- rm -rvf config/deluge/archive
 	- rm -rvf config/deluge/icons
-	- rm -rvf config/deluge/logs
+	- rm -rvf config/deluge/logs/*
 	- rm -rvf config/deluge/seedmage/state/*
 	- rm -vf config/deluge/cookies.txt
 	- find . -type d -name "__pycache__" -exec rm -rf {} \;
@@ -55,6 +71,7 @@ backup-config:
 	- cp -vf config/traktarr/config.json config/traktarr/config.json.bak
 
 update-config: backup-config
+	- cp sensitive/.env .env
 	{ \
 		set -e ;\
 		set -x ;\
@@ -70,6 +87,7 @@ update-config: backup-config
 		sed "s#\"client_id\": \".*\",#\"client_id\": \"$$TRAKT_CLIENT_ID\",#g" -i config/traktarr/config.json; \
 		sed "s#\"client_secret\": \".*\",#\"client_secret\": \"$$TRAKT_CLIENT_SECRET\",#g" -i config/traktarr/config.json; \
 	}
+	- cp sensitive/.env.template .env
 
 reset: clean update-config up
 
@@ -81,4 +99,8 @@ seedmage-reset:
 	- docker exec -it deluge /config/seedmage/seedmage.sh
 
 seedmage-attach:
-	docker exec -it deluge screen -rd seedmage
+	- docker exec -it deluge screen -rd seedmage
+
+install-plugin:
+	- mkdir -vp ~/.config/deluge/plugins/
+	- echo ${CWD}/config/deluge/DelugeOrganise > ~/.config/deluge/plugins/DelugeOrganise.egg-link
