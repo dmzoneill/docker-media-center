@@ -56,3 +56,21 @@ seedmage-reset:
 seedmage-attach:
 install-plugin:
 ```
+
+TCP Ports
+```
+    ports:
+      - 8112:8112     # deluge webui 
+      - 55555:55555   # deluge thin-client
+      - 3128:3128     # squid
+      - 8118:8118     # privoxy
+      - 6881:6881/udp # bittorrent
+      - 9091:9091     # transmission webui 
+      - 51413:51413   # transmission thin-client
+      - 9117:9117     # jacket
+      - 7878:7878     # radarr
+      - 7879:7879     # documentaries
+      - 8989:8989     # sonarr
+      - 8090:80       # organizr
+      - 8686:8686     # lidarr
+```
