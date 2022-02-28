@@ -131,12 +131,6 @@ Bring it up
 make up
 ```
 
-## Deluge client integration
-Install deluge plugin for filebot integration
-```
-make install-plugin
-```
-
 ## Fake seeder
 Manage the fake seeder
 ```
@@ -180,3 +174,23 @@ If you want transmision or rutorrent or other, change the replicas in the docker
       - downloads:/downloads # downloads folder
       - ./config/rutorrent:/config # config files
 ```
+
+## Deluge organise
+![Alt text](/doc/image/organise.png?raw=true "Overview")
+
+### Deluge client integration
+Install deluge plugin for filebot integration
+```
+make install-plugin
+```
+
+### Organise script
+Inside the docker folder you can find the filebot sorter script.
+You must have a filebot license installed for it to work
+
+```
+config/deluge/organise
+```
+
+### Enable the FBlocation column
+![Alt text](/doc/image/fblocation.png?raw=true "Overview")
