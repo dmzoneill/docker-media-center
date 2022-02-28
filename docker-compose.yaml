@@ -238,7 +238,7 @@ services:
     container_name: plex
     image: linuxserver/plex:latest
     restart: unless-stopped
-    network_mode: host # run on host network namespace
+    network_mode: service:vpn # run on host network namespace
     env_file: .env
     volumes:
       - ./config/plex:/config # config files
@@ -285,7 +285,7 @@ services:
     replicas: 0
     image: ghcr.io/linuxserver/calibre
     restart: unless-stopped
-    network_mode: host # run on host network namespace
+    network_mode: service:vpn # run on host network namespace
     environment:
       - PUID=1000
       - PGID=1000
@@ -306,7 +306,7 @@ services:
     replicas: 0
     container_name: transmission
     restart: unless-stopped
-    network_mode: service:vpn # run on the vpn network
+    network_mode: service:vpn # run on host network namespace
     env_file: .env
     volumes:
       - downloads:/downloads # downloads folder
