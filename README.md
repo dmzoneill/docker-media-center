@@ -66,6 +66,11 @@ GVFS_DATA_SERIES=/smb/series/Entertainment/Series
 GVFS_DATA_DOCUMENTARIES=/smb/series/Entertainment/Documentaries
 ```
 
+Update the config
+```
+make update-config
+```
+
 ### Storage Options
 Option 1) Symlink
 ```
