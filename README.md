@@ -139,6 +139,10 @@ make seedimage-attach
 ```
 
 ## Port forwarding
+
+You can use whatever ports you want externally, but internally all the services use 127.0.0.1 and their default port.
+Changing the ports may required changes else where
+
 TCP Ports
 ```
     ports:
