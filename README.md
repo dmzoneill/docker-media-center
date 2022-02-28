@@ -14,9 +14,20 @@ Docker Media Center Over OpenVPN
 ## Configuration
 You need to provide your files for config
 ```
-mkdir sensitive
-mkdir sensitive/Indexers (your jacket indexers)
-touch sensitive/vpn.conf (open vpn config)
+sensitive/
+├── filebot.psm
+├── Indexers
+│   ├── eztv.json
+│   ├── iptorrents.json
+│   ├── limetorrents.json
+│   ├── privatehd.json
+│   ├── rarbg.json
+│   ├── rutracker.json
+│   ├── thepiratebay.json
+│   ├── torrentview.json
+│   ├── yts.json
+│   ├── zooqle.json
+└── vpn.conf
 ```
 
 Update env file
