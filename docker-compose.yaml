@@ -44,6 +44,7 @@ services:
 
   vpn:
     container_name: vpn
+    replicas: 1
     image: dperson/openvpn-client:latest
     cap_add:
       - net_admin # required to modify network interfaces
@@ -73,6 +74,7 @@ services:
 
   deluge:
     container_name: deluge
+    replicas: 1
     image: deluge
     restart: unless-stopped
     network_mode: service:vpn # run on the vpn network
@@ -89,6 +91,7 @@ services:
 
   jackett:
     container_name: jackett
+    replicas: 1
     image: linuxserver/jackett:latest
     restart: unless-stopped
     network_mode: service:vpn # run on host network namespace
@@ -103,6 +106,7 @@ services:
 
   sonarr:
     container_name: sonarr
+    replicas: 1
     image: linuxserver/sonarr:develop
     restart: unless-stopped
     network_mode: service:vpn # run on host network namespace
@@ -117,6 +121,7 @@ services:
 
   radarr:
     container_name: radarr
+    replicas: 1
     image: linuxserver/radarr:nightly
     restart: unless-stopped
     network_mode: service:vpn # run on host network namespace
@@ -131,6 +136,7 @@ services:
 
   documentaries:
     container_name: documentaries
+    replicas: 1
     image: linuxserver/radarr:nightly
     restart: unless-stopped
     network_mode: service:vpn # run on host network namespace
@@ -145,6 +151,7 @@ services:
   
   privoxy:
     container_name: privoxy
+    replicas: 1
     image: ajoergensen/privoxy:latest
     restart: unless-stopped
     network_mode: service:vpn # run on the vpn network
@@ -154,6 +161,7 @@ services:
 
   squid:
     container_name: squid
+    replicas: 1
     image: minimum2scp/squid:latest
     restart: unless-stopped
     network_mode: service:vpn # run on the vpn network
@@ -165,6 +173,7 @@ services:
 
   organizr:
     container_name: organizr
+    replicas: 1
     image: organizr/organizr
     restart: unless-stopped
     network_mode: service:vpn # run on host network namespace
@@ -179,6 +188,7 @@ services:
       
   lidarr:
     container_name: lidarr
+    replicas: 1
     image: lscr.io/linuxserver/lidarr
     env_file: .env
     network_mode: service:vpn # run on host network namespace
@@ -191,6 +201,22 @@ services:
       - ./config/lidarr:/config
     restart: unless-stopped
     
+  bazarr:
+    container_name: bazarr
+    replicas: 0
+    image: lscr.io/linuxserver/bazarr
+    env_file: .env
+    network_mode: service:vpn # run on host network namespace
+    volumes:
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
+      - movies:/movies # tv shows folder
+      - documentaries:/documentaries # documentaries
+      - music:/music # music
+      - ./config/bazarr:/config
+    restart: unless-stopped
+    
+
   plex:
     container_name: plex
     image: linuxserver/plex:latest
@@ -207,6 +233,7 @@ services:
 
   traktarr:
     container_name: traktarr
+    replicas: 1
     image: traktarr
     env_file: .env
     build:
@@ -219,6 +246,7 @@ services:
     
   tools:
     container_name: tools
+    replicas: 1
     image: tools
     env_file: .env
     build:
