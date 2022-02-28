@@ -40,6 +40,32 @@ Update env file
 vim .env
 ```
 
+Generate an api key
+```
+# date | md5sum
+2dfc7c419f222a1dc23c5af2787ae485
+```
+
+Update radarr, sonarr, lidarr keys
+```
+PUID=1000
+PGID=1000
+TZ=Europe/Dublin
+PRIVATE_TRACKERS="stackoverflow.tech\|empirehost.me\|privatehd.to\|bgp.technology"
+SONARR_KEY=2dfc7c419f222a1dc23c5af2787ae485
+RADARR_KEY=2dfc7c419f222a1dc23c5af2787ae485
+LIDARR_KEY=2dfc7c419f222a1dc23c5af2787ae485
+JACKETT_KEY=2dfc7c419f222a1dc23c5af2787ae485
+TRAKT_CLIENT_ID=
+TRAKT_CLIENT_SECRET=
+DELUGE_PASSWORD=deluge
+SEED_SPEED=6507
+GVFS_DATA_MUSIC=/smb/series/Entertainment/Music
+GVFS_DATA_FILMS=/smb/films/Entertainment/Films
+GVFS_DATA_SERIES=/smb/series/Entertainment/Series
+GVFS_DATA_DOCUMENTARIES=/smb/series/Entertainment/Documentaries
+```
+
 ### Storage Options
 Option 1) Symlink
 ```
