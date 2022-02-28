@@ -65,5 +65,14 @@ TCP Ports
 ## Other services?
 If you want transmision or rutorrent or other, change the replicas in the docker-compose file from 0 to 1
 ```
-docker-compose --scale 
+  rutorrent:
+    container_name: rutorrent
+    replicas: 0
+    image: linuxserver/rutorrent:latest
+    restart: unless-stopped
+    network_mode: service:vpn # run on the vpn network
+    env_file: .env
+    volumes:
+      - downloads:/downloads # downloads folder
+      - ./config/rutorrent:/config # config files
 ```
