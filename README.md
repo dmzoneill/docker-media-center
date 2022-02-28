@@ -40,13 +40,7 @@ Update env file
 vim .env
 ```
 
-## Build
-Build all the images
-```
-make build
-```
-
-## Storage Options
+### Storage Options
 Option 1) Symlink
 ```
 ls -s /path/to/films /films
@@ -95,6 +89,11 @@ volumes:
       device: /music
 ```
 
+## Build
+Build all the images
+```
+make build
+```
 ## Launch
 Bring it up
 ```
