@@ -14,6 +14,11 @@ Docker Media Center Over OpenVPN
 ## Configuration
 You need to provide your files for config
 ```
+mkdir sensitive
+```
+
+Filebot licence, openvpn config and jacket indexers
+```
 sensitive/
 ├── filebot.psm
 ├── Indexers
