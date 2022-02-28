@@ -235,44 +235,47 @@ services:
       - ~/.cache/thumbnails:/root/.cache/thumbnails   
     restart: unless-stopped
 
-#  calibre:
-#    container_name: calibre
-#    image: ghcr.io/linuxserver/calibre
-#    restart: unless-stopped
-#    network_mode: host # run on host network namespace
-#    environment:
-#      - PUID=1000
-#      - PGID=1000
-#      - TZ=Europe/London
-#      - GUAC_USER=abc #optional
-#      - GUAC_PASS=900150983cd24fb0d6963f7d28e17f72 #optional
-#      - UMASK_SET=022 #optional
-#      - CLI_ARGS= #optional
-#    volumes:
-#      - ./config/calibre:/config
-#    ports:
-#      - 8080:8080
-#      - 8081:8081
-#    restart: unless-stopped
+  calibre:
+    container_name: calibre
+    replicas: 0
+    image: ghcr.io/linuxserver/calibre
+    restart: unless-stopped
+    network_mode: host # run on host network namespace
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - GUAC_USER=abc #optional
+      - GUAC_PASS=900150983cd24fb0d6963f7d28e17f72 #optional
+      - UMASK_SET=022 #optional
+      - CLI_ARGS= #optional
+    volumes:
+      - ./config/calibre:/config
+    ports:
+      - 8080:8080
+      - 8081:8081
+    restart: unless-stopped
 
-#  transmission:
-#    image: linuxserver/transmission
-#    container_name: transmission
-#    restart: unless-stopped
-#    network_mode: service:vpn # run on the vpn network
-#    env_file: .env
-#    volumes:
-#      - downloads:/downloads # downloads folder
-#      - series:/tv # tv shows folder
-#      - movies:/movies # tv shows folder
-#      - ./config/transmission:/config # config files
+  transmission:
+    image: linuxserver/transmission
+    replicas: 0
+    container_name: transmission
+    restart: unless-stopped
+    network_mode: service:vpn # run on the vpn network
+    env_file: .env
+    volumes:
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
+      - movies:/movies # tv shows folder
+      - ./config/transmission:/config # config files
 
-#  rutorrent:
-#    container_name: rutorrent
-#    image: linuxserver/rutorrent:latest
-#    restart: unless-stopped
-#    network_mode: service:vpn # run on the vpn network
-#    env_file: .env
-#    volumes:
-#      - downloads:/downloads # downloads folder
-#      - ./config/rutorrent:/config # config files
+  rutorrent:
+    container_name: rutorrent
+    replicas: 0
+    image: linuxserver/rutorrent:latest
+    restart: unless-stopped
+    network_mode: service:vpn # run on the vpn network
+    env_file: .env
+    volumes:
+      - downloads:/downloads # downloads folder
+      - ./config/rutorrent:/config # config files
