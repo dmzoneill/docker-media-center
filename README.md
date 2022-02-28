@@ -4,8 +4,9 @@
 
 ![Alt text](/doc/image/overview.png?raw=true "Overview")
 
-## Getting started
+# Getting started
 
+## Configuration
 You need to provide your files for config
 ```
 mkdir sensitive
@@ -18,6 +19,7 @@ Update env file
 vim .env
 ```
 
+## Build and launch
 Build all the images
 ```
 make build
@@ -28,35 +30,20 @@ Bring it up
 make up
 ```
 
+## Deluge client integration
 Install deluge plugin for filebot integration
 ```
 make install-plugin
 ```
 
+## Fake seeder
 Manage the fake seeder
 ```
 make seedimage-reset
 make seedimage-attach
 ```
 
-All targets
-```
-clean-mounts:
-build-images:
-build: build-images clean-mounts
-up: build
-down: 
-check:
-clean: down
-backup-diff:
-backup-config:
-update-config: backup-config
-reset: clean update-config up
-seedmage-reset:
-seedmage-attach:
-install-plugin:
-```
-
+## Port forwarding
 TCP Ports
 ```
     ports:
@@ -73,4 +60,10 @@ TCP Ports
       - 8989:8989     # sonarr
       - 8090:80       # organizr
       - 8686:8686     # lidarr
+```
+
+## Other services?
+If you want transmision or rutorrent or other, change the replicas in the docker-compose file from 0 to 1
+```
+docker-compose --scale 
 ```
