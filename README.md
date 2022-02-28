@@ -40,12 +40,62 @@ Update env file
 vim .env
 ```
 
-## Build and launch
+## Build
 Build all the images
 ```
 make build
 ```
 
+## Storage Options
+Option 1) Symlink
+```
+ls -s /path/to/films /films
+ls -s /path/to/series /tv
+ls -s /path/to/downloads /downloads
+ls -s /path/to/documentaries /documentaries
+ls -s /path/to/music /music
+```
+
+Option 2) Update docker-compose file
+```
+volumes:
+  movies:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /films
+
+  series:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /tv
+
+  downloads:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /downloads
+
+  documentaries:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /documentaries
+
+  music:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /music
+```
+
+## Launch
 Bring it up
 ```
 make up
