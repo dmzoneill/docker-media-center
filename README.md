@@ -60,6 +60,9 @@ TCP Ports
       - 8989:8989     # sonarr
       - 8090:80       # organizr
       - 8686:8686     # lidarr
+      - 6767:6767     # bazarr
+      - 8265:8265     # tdarr
+      - 8266:8266     # tdarr
 ```
 
 ## Other services?

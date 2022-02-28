@@ -68,6 +68,9 @@ services:
       - 8989:8989 # sonarr
       - 8090:80 # organizr
       - 8686:8686 # lidarr
+      - 6767:6767 # bazarr
+      - 8265:8265 # tdarr
+      - 8266:8266 # tdarr
     networks:
       - vpnnet
     command: '-f "" -d -r 192.168.0.0/24' # enable firewall and route local network traffic
@@ -216,6 +219,20 @@ services:
       - ./config/bazarr:/config
     restart: unless-stopped
     
+  tdarr:
+    container_name: tdarr
+    replicas: 0
+    image: haveagitgat/tdarr
+    env_file: .env
+    network_mode: service:vpn # run on host network namespace
+    volumes:
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
+      - movies:/movies # tv shows folder
+      - documentaries:/documentaries # documentaries
+      - music:/music # music
+      - ./config/tdarr:/config
+    restart: unless-stopped     
 
   plex:
     container_name: plex
