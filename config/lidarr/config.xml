@@ -1,5 +1,5 @@
 <Config>
-  <LogLevel>info</LogLevel>
+  <LogLevel>trace</LogLevel>
   <BindAddress>*</BindAddress>
   <EnableSsl>False</EnableSsl>
   <SslCertPath></SslCertPath>

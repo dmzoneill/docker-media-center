@@ -4,7 +4,7 @@ SHELL := /bin/bash
 CWD := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 clean-mounts:
-	{ \
+	- { \
 		for X in `mount | grep merged | awk '{print $3}'`; do \
 			sudo umount $$X; \
 		done \
@@ -28,6 +28,8 @@ up: build
 	docker exec -it deluge /config/seedmage/seedmage.sh
 	- cp sensitive/.env.template .env
 	- cp sensitive/filebot.psm config/deluge/
+	- docker exec -it deluge mkdir -vp /opt/share/filebot/
+	- docker exec -it deluge chmod 777 -R /opt/share/filebot/
 	- docker exec -it deluge su abc -c "filebot --license /config/filebot.psm"
 	- rm -f config/deluge/filebot.psm
 

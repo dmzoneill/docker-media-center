@@ -38,3 +38,4 @@
 **/.bash_history
 **/.cache/**
 **/.java/**
+**config/deluge/plugins/.python-eggs/**
