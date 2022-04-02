@@ -39,3 +39,4 @@
 **/.cache/**
 **/.java/**
 **config/deluge/plugins/.python-eggs/**
+**config/deluge/core

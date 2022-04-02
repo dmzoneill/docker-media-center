@@ -1,5 +1,11 @@
 #!/bin/bash -x
 
+echo "============================================================"
+echo "==================== PAUSE COMPLETE ========================"
+echo "============================================================"
+echo ""
+echo $DELUGE_PASSWORD
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 torrentid=$1
 

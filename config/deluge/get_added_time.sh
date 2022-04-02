@@ -7,10 +7,10 @@ curl -b cookies.txt --compressed -i -H "Content-Type: application/json" -H "Acce
 
 result=$(curl -s -b cookies.txt --compressed -H "Content-Type: application/json" -H "Accept: application/json" -X POST -d '{"method": "core.get_torrent_status", "params": ["'$torrentid'",["active_time", "label", "tracker_host"]], "id": 1}' http://127.0.0.1:8112/json)
 
-#echo $result
+sleep 15
 
-runtime=$(echo $result | grep -P -o "\d+" | head -n 1)
+runtime=$(echo $result | grep -oE "\d+" | head -n 1)
 runleft=$((1209600 - $runtime))
 
-echo $((1209600 - runtime))
+echo $runleft
 

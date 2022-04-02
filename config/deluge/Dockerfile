@@ -1,13 +1,11 @@
 FROM lscr.io/linuxserver/deluge
 RUN sed 's/false/bash/' -i /etc/passwd
-# Full installation.
-RUN echo "********** [INSTALLING DEPENDENCIES] **********" \
-	&& apk add --update --no-cache --virtual build-dependencies \
+RUN apk add --update --no-cache --virtual build-dependencies \
 		xz \
 		tar \
 		curl \
-		ca-certificates \
-	&& apk add --no-cache \
+		ca-certificates
+RUN apk add --no-cache \
 		inotify-tools \
 		tzdata \
         jq \
@@ -16,19 +14,19 @@ RUN echo "********** [INSTALLING DEPENDENCIES] **********" \
         py3-beautifulsoup4 \
         openjdk11 \
         screen \
-	\
-	\
-	&& echo "********** [INSTALLING FILEBOT] **********" \
-	&& mkdir -p /opt/share/filebot \
-	&& cd /opt/share/filebot \
-	&& curl -s -L -o filebot.tar.xz https://get.filebot.net/filebot/FileBot_4.9.5/FileBot_4.9.5-portable.tar.xz \
+		libmediainfo
+
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main unrar 
+		
+RUN mkdir -p /opt/share/filebot
+RUN cd /opt/share/filebot \
+	&& curl -s -L -o filebot.tar.xz https://get.filebot.net/filebot/FileBot_4.9.6/FileBot_4.9.6-portable.tar.xz \
 	&& chmod 777 filebot.tar.xz \
 	&& tar xvf filebot.tar.xz \
-	&& ln -sf /opt/share/filebot/filebot.sh /usr/local/bin/filebot \
-	\
-	\
-	&& echo "********** [CLEAN UP] **********" \
-	&& apk del build-dependencies \
+	&& ln -sf /opt/share/filebot/filebot.sh /usr/local/bin/filebot
+
+RUN apk del build-dependencies \
+	&& cd /opt/share/filebot \
 	&& rm filebot.tar.xz \
 	&& rm update-filebot.sh \
 	&& rm -rf \

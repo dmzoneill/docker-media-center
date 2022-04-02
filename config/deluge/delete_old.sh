@@ -1,5 +1,11 @@
 #!/bin/bash -x
 
+echo "============================================================"
+echo "======================= DELETE_OLD ========================="
+echo "============================================================"
+echo ""
+echo $DELUGE_PASSWORD
+
 curl -c cookies.txt --compressed -i -H "Content-Type: application/json" -H "Accept: application/json" -X POST -d "{\"method\": \"auth.login\", \"params\": [\"$DELUGE_PASSWORD\"], \"id\": 1}" http://127.0.0.1:8112/json
 ids=$(curl -s -b cookies.txt --compressed -H "Content-Type: application/json" -H "Accept: application/json" -X POST -d '{"method": "core.get_torrents_status", "params": [[],[]], "id": 1}' http://127.0.0.1:8112/json | jq -r '.result | keys | .[]')
 
@@ -13,10 +19,12 @@ for X in $ids; do
   if [ $left -lt 0 ]; then
     if [ -f "logs/organise-$X.log" ]; then
       grep "\[COPY\]" logs/organise-$X.log >/dev/null 2>&1
-      if [ "$?" == "0" ]; then      
+      if [ "$?" == "0" ]; then 
+        echo "delete $X"     
         delete $X 
       fi
     else
+      echo "delete $X"    
       delete $X
     fi 
   else
@@ -33,3 +41,6 @@ for X in $ids; do
     fi
   fi	  
 done
+
+echo ""
+echo ""
