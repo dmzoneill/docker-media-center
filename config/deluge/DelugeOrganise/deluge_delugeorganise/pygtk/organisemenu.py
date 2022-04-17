@@ -56,12 +56,12 @@ class OrganiseMenu(MenuItem):
 
 
     def organise(self, hash, name, location):
-        cmd = "docker exec -it deluge sh -c \""
+        cmd = "docker exec -it deluge su default -c \""
         cmd += "cd /config/; ./organise " + hash + " '" + name  + "' '" + location + "'"
         cmd += "\""
         logging.debug(cmd + "\n")
         deluge_cmd = "cd /config/; ./organise '{hash}' '{name}' '{location}'".format(hash=hash, name=name, location=location)
-        docker_cmd = r"docker exec -it deluge sh -c \"{deluge_cmd}\"".format(deluge_cmd=deluge_cmd)
+        docker_cmd = r"docker exec -it deluge su default -c \"{deluge_cmd}\"".format(deluge_cmd=deluge_cmd)
         terminal_cmd = "gnome-terminal -e \"{docker_cmd}\"".format(docker_cmd=docker_cmd)
         logging.debug(terminal_cmd)
         os.system(terminal_cmd)
@@ -81,9 +81,10 @@ class OrganiseMenu(MenuItem):
 
     def clear_logfile(self, arr):
         logging.debug('truncate log')
-        cmd="echo '' > /config/deluge/logs/organise-" + arr['hash'] + ".log"
+        cmd="echo '' > /config/logs/organise-" + arr['hash'] + ".log"
         docker_cmd = r"docker exec -it deluge sh -c \"{cmd}\"".format(cmd=cmd)
-        os.system(docker_cmd)
+        terminal_cmd = "gnome-terminal -e \"{docker_cmd}; sleep 30\"".format(docker_cmd=docker_cmd)
+        os.system(terminal_cmd)
 
     def on_clear_logfile(self, widget=None):
         logging.debug('organise on_clear_logfile')

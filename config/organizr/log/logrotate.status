@@ -3,4 +3,4 @@ logrotate state -- version 2
 "/config/log/nginx/access.log" 2021-5-23-2:0:0
 "/config/log/nginx/error.log" 2021-5-19-2:0:0
 "/config/log/nginx/status_errors.log" 2021-5-19-2:0:0
-"/config/log/php/error.log" 2022-3-27-2:0:0
+"/config/log/php/error.log" 2022-4-17-2:0:0

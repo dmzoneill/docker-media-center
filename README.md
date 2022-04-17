@@ -12,6 +12,11 @@ Docker Media Center Over OpenVPN
 # Getting started
 
 ## Configuration
+You need to provide your home directory for persistent files
+```
+mkdir home
+```
+
 You need to provide your files for config
 ```
 mkdir sensitive

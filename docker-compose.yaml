@@ -36,6 +36,13 @@ volumes:
       type: none
       device: /music
 
+  home:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./home
+
 networks: 
   vpnnet: 
     driver: bridge
@@ -46,12 +53,17 @@ services:
     container_name: vpn
     scale: 1
     image: dperson/openvpn-client:latest
+    sysctls:
+      net.ipv6.conf.all.disable_ipv6: 0
+      net.ipv4.conf.all.forwarding: 1
+      net.ipv6.conf.all.forwarding: 1
     cap_add:
       - net_admin # required to modify network interfaces
     restart: unless-stopped
     volumes:
       - /dev/net:/dev/net:z # tun device
       - ./config/vpn:/vpn # OpenVPN configuration
+      - home:/data # home
     security_opt:
       - label:disable
     ports:
@@ -94,7 +106,7 @@ services:
       - documentaries:/documentaries # documentaries
       - music:/music # music
       - ./config/deluge:/config # config files
-
+      - home:/data # home
   jackett:
     container_name: jackett
     scale: 1
@@ -109,7 +121,7 @@ services:
       - documentaries:/documentaries # documentaries
       - music:/music # music
       - ./config/jackett:/config # config files
-
+      - home:/data # home
   sonarr:
     container_name: sonarr
     scale: 1
@@ -124,6 +136,7 @@ services:
       - documentaries:/documentaries # documentaries
       - music:/music # music
       - ./config/sonarr:/config # config files
+      - home:/data # home
 
   radarr:
     container_name: radarr
@@ -139,6 +152,7 @@ services:
       - documentaries:/documentaries # documentaries
       - music:/music # music
       - ./config/radarr:/config # config files
+      - home:/data # home
 
   documentaries:
     container_name: documentaries
@@ -154,7 +168,8 @@ services:
       - documentaries:/documentaries # documentaries
       - music:/music # music
       - ./config/documentaries:/config # config files
-  
+      - home:/data # home
+
   privoxy:
     container_name: privoxy
     scale: 1
@@ -164,6 +179,7 @@ services:
     env_file: .env
     volumes:
       - ./config/privoxy:/etc/privoxy # config files
+      - home:/data # home
 
   squid:
     container_name: squid
@@ -176,6 +192,7 @@ services:
       - ./config/squid/logs:/var/log/squid # config files
       - ./config/squid/cache:/var/cache/squid # config files
       - ./config/squid/:/etc/squid # config files
+      - home:/data # home
 
   organizr:
     container_name: organizr
@@ -191,7 +208,8 @@ services:
       - documentaries:/documentaries # documentaries
       - music:/music # music
       - ./config/organizr:/config # config files
-      
+      - home:/data # home
+
   lidarr:
     container_name: lidarr
     scale: 1
@@ -205,6 +223,7 @@ services:
       - documentaries:/documentaries # documentaries
       - music:/music # music
       - ./config/lidarr:/config
+      - home:/data # home
     restart: unless-stopped
     
   bazarr:
@@ -220,6 +239,7 @@ services:
       - documentaries:/documentaries # documentaries
       - music:/music # music
       - ./config/bazarr:/config
+      - home:/data # home
     restart: unless-stopped
     
   tdarr:
@@ -235,6 +255,7 @@ services:
       - documentaries:/documentaries # documentaries
       - music:/music # music
       - ./config/tdarr:/config
+      - home:/data # home
     restart: unless-stopped     
 
   plex:
@@ -250,6 +271,8 @@ services:
       - movies:/movies # tv shows folder
       - documentaries:/documentaries # documentaries
       - music:/music # music
+      - home:/data # home
+    restart: unless-stopped
 
   traktarr:
     container_name: traktarr
@@ -267,6 +290,7 @@ services:
       - music:/music # music
       - ./config/traktarr:/traktarr
       - ./config/traktarr/config:/config
+      - home:/data # home
     restart: unless-stopped
 
   amd:
@@ -283,6 +307,7 @@ services:
       - music:/music # music
       - ./config/amd:/config
       - /downloads/amd:/downloads-amd
+      - home:/data # home
     restart: unless-stopped
 
   calibre:
@@ -299,7 +324,7 @@ services:
       - documentaries:/documentaries # documentaries
       - music:/music # music
       - ./config/calibre:/config
-    restart: unless-stopped
+      - home:/data # home
 
   transmission:
     image: linuxserver/transmission
@@ -315,6 +340,7 @@ services:
       - documentaries:/documentaries # documentaries
       - music:/music # music
       - ./config/transmission:/config # config files
+      - home:/data # home
 
   rutorrent:
     container_name: rutorrent
@@ -330,6 +356,7 @@ services:
       - documentaries:/documentaries # documentaries
       - music:/music # music
       - ./config/rutorrent:/config # config files
+      - home:/data # home
 
   tools:
     container_name: tools
@@ -348,4 +375,5 @@ services:
       - ./config/tools:/tools
       - ~/.local/share/gvfs-metadata:/root/.local/share/gvfs-metadata
       - ~/.cache/thumbnails:/root/.cache/thumbnails   
+      - home:/data # home
     restart: unless-stopped

@@ -1,17 +1,23 @@
-#!/bin/bash -x
+#!/bin/bash -xv
 
-SEP="==================================================================================================\n"
-sonarSocket="127.0.0.7:8989"
+exec &> >(tee /config/logs/organise-$1.log)
+
+whoami
+export
+
+sonarSocket="127.0.0.1:8989"
 sonarKey="$SONARR_KEY"
+radarrSocket="127.0.0.1:7878"
+radarrKey="$RADARR_KEY"
 torrentid=$1
 torrentname=$2
 torrentpath=$3
 
 if [ "$torrentid" == "" ]; then
   if [ ! -f "failed.log" ]; then
-    /usr/bin/touch failed.log
+    touch failed.log
   fi
-  /bin/echo "Failed: $torrentid $torrentname $torrentpath" >> failed.log
+  echo "Failed: $torrentid $torrentname $torrentpath" >> failed.log
   exit 1
 fi
 
@@ -23,81 +29,91 @@ amclog="/config/logs/amc.log"
 amcexclude="/config/logs/amc.txt"
 logfile="/config/logs/organise-$torrentid.log"
 
-/bin/echo -e "Login to deluge" > $logfile
-/bin/echo -e "===============\n" >> $logfile
+echo -e "\n"
+echo -e "Login to deluge"
+echo -e "===============\n"
 curl -c cookies.txt --compressed -i -H "Content-Type: application/json" -H "Accept: application/json" -X POST -d "{\"method\": \"auth.login\", \"params\": [\"$DELUGE_PASSWORD\"], \"id\": 1}" http://127.0.0.1:8112/json >/dev/null 2>&1
 
-/bin/echo -e "\n" >> $logfile
-/bin/echo -e "Connect to deluge web" >> $logfile
-/bin/echo -e "=====================\n" >> $logfile
-/usr/bin/curl -v -b /config/cookies.txt --compressed -i -H "Content-Type: application/json" -H "Accept: application/json" -d '{"method": "web.connected", "params": [], "id": 1}' http://127.0.0.1:8112/json >> $logfile 2>&1
+echo -e "\n"
+echo -e "Connect to deluge web"
+echo -e "=====================\n"
+curl -v -b /config/cookies.txt --compressed -i -H "Content-Type: application/json" -H "Accept: application/json" -d '{"method": "web.connected", "params": [], "id": 1}' http://127.0.0.1:8112/json 2>&1
 
-/bin/echo -e "\n" >> $logfile
-/bin/echo -e "Get torrent label" >> $logfile
-/bin/echo -e "=================\n" >> $logfile
+echo -e "\n"
+echo -e "Get torrent label"
+echo -e "=================\n"
 torrentlabel=$(curl -v -b /config/cookies.txt --compressed -i -H "Content-Type: application/json" -H "Accept: application/json" -d '{"method": "core.get_torrent_status", "params": ["'$torrentid'",["label"]], "id": 1}' http://127.0.0.1:8112/json | awk -F\" '{print $6}' | tail -n 1 | tr -d '\n')
-/bin/echo -e "Label: $torrentlabel" >> $logfile
+echo -e "Label: $torrentlabel"
 
-/bin/echo -e "\n" >> $logfile
-/bin/echo -e "$SEP" >> $logfile
-/bin/echo -e "Torrent Details: $torrentname $torrentpath $torrentid $torrentlabel\n" >> $logfile
+echo -e "\n"
+echo -e "Torrent Details"
+echo -e "===============\n"
+echo -e "$torrentname $torrentpath $torrentid $torrentlabel\n"
 
-/bin/cp -rvf "/config/state/$torrentid.torrent" "/config/seedmage/torrents/" >> $logfile
-/bin/echo "cp -rvf \"/config/state/$torrentid.torrent\" \"/config/seedmage/torrents/\"" >> $logfile 
+echo -e "\n"
+echo -e "Copy to sedmage"
+echo -e "===============\n"
+cp -rvf "/config/state/$torrentid.torrent" "/config/seedmage/torrents/"
+echo "cp -rvf \"/config/state/$torrentid.torrent\" \"/config/seedmage/torrents/\"" 
 
-export HOME=/config
+echo -e "\n"
+echo -e "Copy to work directory"
+echo -e "======================\n"
 
-/bin/echo -e "Filebot" >> $logfile
-/bin/echo -e "=======\n" >> $logfile
+mkdir -vp /downloads/work
+cp -rvf "$torrentpath/$torrentname" "$torrentpath/work/$torrentname"
 
-mkdir -vp /downloads/work >> $logfile
-/bin/cp -rvf "$torrentpath/$torrentname" "$torrentpath/work/$torrentname" >> $logfile
-
+echo -e "\n"
+echo -e "Filebot\n"
+echo -e "=======\n"
 
 if [ "$torrentlabel" == "tv-sonarr" ]; then
   defs="ut_label=TV"
-  /bin/echo "filebot tv-sonarr" >> $logfile 2>&1
-  echo "/usr/local/bin/filebot -script fn:amc --output="/tv" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" seriesFormat="$seriesFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs"
-  /usr/local/bin/filebot -script fn:amc --output="/tv" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" seriesFormat="$seriesFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs >> $logfile 2>&1
+  echo "filebot tv-sonarr" 2>&1
+  filebot -script fn:amc --output="/tv" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" seriesFormat="$seriesFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs 2>&1
 elif [ "$torrentlabel" == "radarr" ]; then
   defs="ut_label=Movie"
-  /bin/echo "filebot radarr" >> $logfile 2>&1
-  /usr/local/bin/filebot -script fn:amc --output="/movies" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs >> $logfile 2>&1
+  echo "filebot radarr" 2>&1
+  filebot -script fn:amc --output="/movies" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs 2>&1
 elif [ "$torrentlabel" == "skip" ]; then
   defs=""
-  /bin/echo "filebot unknown" >> $logfile 2>&1
-  /usr/local/bin/filebot -script fn:amc --output="/downloads" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" seriesFormat="$seriesFormat" unsortedFormat="$unsortedFormat" unsorted=y subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs >> $logfile 2>&1
+  echo "filebot unknown" 2>&1
+  filebot -script fn:amc --output="/downloads" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" seriesFormat="$seriesFormat" unsortedFormat="$unsortedFormat" unsorted=y subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs 2>&1
 fi
 
-/bin/grep "\[COPY\]" $logfile >/dev/null 2>&1
+grep "\[COPY\]" $logfile >/dev/null 2>&1
+
+echo -e "\n"
+echo -e "Radarr/Sonarr rescan\n"
+echo -e "====================\n"
 
 if [ "$?" == "0" ]; then
   if [ "$torrentlabel" == "tv-sonarr" ]; then
-    /usr/bin/curl -v http://$sonarSocket/api/command -d '{"name": "RescanSeries"}' --header "X-Api-Key:$sonarKey" >> $logfile 2>&1
+    curl -v http://$sonarSocket/api/command -d '{"name": "RescanSeries"}' --header "X-Api-Key:$sonarKey" 2>&1
   else
-    /bin/echo ""
+    curl -v http://$radarrSocket/api/command -d '{"name": "DownloadedMoviesScan", "path" : ""}' --header "X-Api-Key:$radarrKey" 2>&1
   fi
 fi
 
-/bin/echo -e "\n" >> $logfile
-/usr/bin/timeout 30 bash /config/delete_old.sh >> $logfile
+echo -e "\n"
+timeout 30 bash /config/delete_old.sh
 
-/bin/echo -e "\n" >> $logfile
-/usr/bin/timeout 30 bash /config/pause_completed_public_tracker.sh $torrentid >> $logfile
-/usr/bin/timeout 30 bash /config/pause_completed_public_tracker.sh >> $logfile
+echo -e "\n"
+timeout 30 bash /config/pause_completed_public_tracker.sh $torrentid
+timeout 30 bash /config/pause_completed_public_tracker.sh
 
-/bin/echo -e "\n" >> $logfile
-/bin/echo -e "$SEP" >> $logfile
+echo -e "\n"
+echo -e "$SEP"
 
-/bin/chmod 666 $logfile >> $logfile
+chmod 666 $logfile
 
-/bin/chown -R abc:abc /downloads/* >> $logfile
-/bin/chown -R abc:abc /config/* >> $logfile
+chown -R default /downloads/*
+chown -R default /config/*
 
-/bin/rm /config/*.bak  >> $logfile
+rm /config/*.bak
 
-/bin/rm -rvf "$torrentpath/work/$torrentname" >> $logfile
+rm -rvf "$torrentpath/work/$torrentname"
 
-/usr/bin/killall -9 curl
+killall -9 curl
 
 exit 0
