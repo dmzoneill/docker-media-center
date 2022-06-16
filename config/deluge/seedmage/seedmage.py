@@ -126,7 +126,8 @@ class Torrent:
         elif randomint % 4 == 0:
           uploaded_bytes = int(self.seed_per_second * self.announce_interval * random.uniform(0.1, 0.3))
         elif randomint % 5 == 0:
-          uploaded_bytes = 0        
+          # uploaded_bytes = 0  
+          uploaded_bytes = int(self.seed_per_second * self.announce_interval * random.uniform(0.45, 0.95))        
         self.total_uploaded += uploaded_bytes
         self.session_uploaded += uploaded_bytes
       
@@ -200,7 +201,7 @@ class Torrent:
     self.save_progress()
     self.update_seed_speed()
 
-    self.threshold = self.seeder.torrent.total_size * random.uniform(0.11, 0.22)
+    self.threshold = self.seeder.torrent.total_size * random.uniform(0.01, 0.05)
 
     if self.firstrun:
       self.firstrun = False

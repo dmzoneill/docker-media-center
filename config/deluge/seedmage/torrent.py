@@ -99,7 +99,7 @@ class File:
 class Seeder:
   HTTP_HEADERS = {
     "Accept-Encoding": "gzip",
-    "User-Agent": "Deluge/2.0.3-2-201906121747-ubuntu18.04.1 libtorrent/1.1.5.0"
+    "User-Agent": "Deluge/2.0.3 libtorrent/2.0.5.0"
   }
 
   proxies = {
