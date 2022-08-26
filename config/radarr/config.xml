@@ -10,7 +10,7 @@
   <UpdateMechanism>Docker</UpdateMechanism>
   <SslPort>9898</SslPort>
   <LaunchBrowser>True</LaunchBrowser>
-  <Branch>nightly</Branch>
+  <Branch>develop</Branch>
   <SslCertPassword></SslCertPassword>
   <InstanceName>Radarr</InstanceName>
 </Config>

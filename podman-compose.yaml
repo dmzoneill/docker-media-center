@@ -68,9 +68,9 @@ services:
     scale: 1
     image: dperson/openvpn-client:latest
     sysctls:
-      net.ipv6.conf.all.disable_ipv6: 0
-      net.ipv4.conf.all.forwarding: 1
-      net.ipv6.conf.all.forwarding: 1
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv4.conf.all.forwarding=1
+      - net.ipv6.conf.all.forwarding=1
     cap_add:
       - net_admin # required to modify network interfaces
     restart: unless-stopped
@@ -79,7 +79,8 @@ services:
       - ./config/vpn:/vpn # OpenVPN configuration
       - home:/data # home
     security_opt:
-      - label:disable
+      - "label=disable"
+      - "seccomp=unconfined"
     ports:
       - 8112:8112 # deluge webui 
       - 55555:55555 # deluge thin-client

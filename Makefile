@@ -71,6 +71,7 @@ backup-diff:
 	- diff config/radarr/config.xml config/radarr/config.xml.bak
 	- diff config/sonarr/config.xml config/sonarr/config.xml.bak
 	- diff config/lidarr/config.xml config/lidarr/config.xml.bak
+	- diff config/readarr/config.xml config/readarr/config.xml.bak
 	- diff config/jackett/Jackett/ServerConfig.json config/jackett/Jackett/ServerConfig.json.bak
 	- diff config/traktarr/config.json config/traktarr/config.json.bak
 
@@ -81,6 +82,7 @@ backup-config:
 	- cp -vf config/radarr/config.xml config/radarr/config.xml.bak
 	- cp -vf config/sonarr/config.xml config/sonarr/config.xml.bak
 	- cp -vf config/lidarr/config.xml config/lidarr/config.xml.bak
+	- cp -vf config/readarr/config.xml config/readarr/config.xml.bak
 	- cp -vf config/jackett/Jackett/ServerConfig.json config/jackett/Jackett/ServerConfig.json.bak
 	- cp -vf config/traktarr/config.json config/traktarr/config.json.bak
 
@@ -96,6 +98,7 @@ update-config: backup-config
 		sed "s#<ApiKey>.*</ApiKey>#<ApiKey>$$RADARR_KEY</ApiKey>#g" -i config/radarr/config.xml; \
 		sed "s#<ApiKey>.*</ApiKey>#<ApiKey>$$SONARR_KEY</ApiKey>#g" -i config/sonarr/config.xml; \
 		sed "s#<ApiKey>.*</ApiKey>#<ApiKey>$$LIDARR_KEY</ApiKey>#g" -i config/lidarr/config.xml; \
+		sed "s#<ApiKey>.*</ApiKey>#<ApiKey>$$READARR_KEY</ApiKey>#g" -i config/readarr/config.xml; \
 		sed "s#\"APIKey\": \".*\",#\"APIKey\": \"$$JACKETT_KEY\",#g" -i config/jackett/Jackett/ServerConfig.json; \
 		sed "s#\"api_key\": \".*\",#\"api_key\": \"$$SONARR_KEY\",#g" -i config/traktarr/config.json; \
 		sed "s#PlexOnlineToken=\".*?\"#PlexOnlineToken=\"$$PLEX_TOKEN\"#g" -i "config/plex/Library/Application Support/Plex Media Server/Preferences.xml"; \
@@ -105,6 +108,16 @@ update-config: backup-config
 	- cp sensitive/.env.template .env
 
 reset: clean update-config up
+
+check-update:
+	{ \
+		cmd="python3 ${CWD}/check_updates.py"; \
+		$$($$cmd); \
+		if [ $$? -eq 1 ]; then \
+		   echo "Update required"; \
+		   $$(make -f ${THIS_FILE} reset); \
+		fi; \
+	}
 
 seedmage-reset:
 	- docker exec -it deluge killall -9 screen

@@ -11,4 +11,5 @@
   <SslCertHash></SslCertHash>
   <UpdateMechanism>Docker</UpdateMechanism>
   <AuthenticationMethod>None</AuthenticationMethod>
+  <InstanceName>Sonarr</InstanceName>
 </Config>

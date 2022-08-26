@@ -1,0 +1,61 @@
+Xsession: X session started for abc at Fri Jul 15 09:47:09 UTC 2022
+localuser:abc being added to access control list
+dbus-update-activation-environment: systemd --user not found, ignoring --systemd argument
+dbus-update-activation-environment: setting USER=abc
+dbus-update-activation-environment: setting HOME=/config
+dbus-update-activation-environment: setting XRDP_PULSE_SINK_SOCKET=xrdp_chansrv_audio_out_socket_10
+dbus-update-activation-environment: setting XRDP_PULSE_SOURCE_SOCKET=xrdp_chansrv_audio_in_socket_10
+dbus-update-activation-environment: setting DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-LJkGr1CFm5,guid=926b1e6196a43a7eaf5be32162d1379d
+dbus-update-activation-environment: setting PULSE_SCRIPT=/etc/xrdp/pulse/default.pa
+dbus-update-activation-environment: setting LOGNAME=abc
+dbus-update-activation-environment: setting PATH=/sbin:/bin:/usr/bin:/usr/local/bin
+dbus-update-activation-environment: setting XRDP_SOCKET_PATH=/run/xrdp/sockdir
+dbus-update-activation-environment: setting DISPLAY=:10.0
+dbus-update-activation-environment: setting UID=1000
+dbus-update-activation-environment: setting SHELL=/bin/bash
+dbus-update-activation-environment: setting XRDP_SESSION=1
+dbus-update-activation-environment: setting GPG_AGENT_INFO=/config/.gnupg/S.gpg-agent:0:1
+dbus-update-activation-environment: setting PWD=/config
+Openbox-Message: Unable to find a valid menu file "/var/lib/openbox/debian-menu.xml"
+QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-abc'
+Xsession: X session started for abc at Fri Jul 15 10:12:47 UTC 2022
+localuser:abc being added to access control list
+dbus-update-activation-environment: systemd --user not found, ignoring --systemd argument
+dbus-update-activation-environment: setting USER=abc
+dbus-update-activation-environment: setting HOME=/config
+dbus-update-activation-environment: setting XRDP_PULSE_SINK_SOCKET=xrdp_chansrv_audio_out_socket_10
+dbus-update-activation-environment: setting XRDP_PULSE_SOURCE_SOCKET=xrdp_chansrv_audio_in_socket_10
+dbus-update-activation-environment: setting DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-gYcftU843Y,guid=2310b4eba42695675f68c31f62d13d9f
+dbus-update-activation-environment: setting PULSE_SCRIPT=/etc/xrdp/pulse/default.pa
+dbus-update-activation-environment: setting LOGNAME=abc
+dbus-update-activation-environment: setting PATH=/sbin:/bin:/usr/bin:/usr/local/bin
+dbus-update-activation-environment: setting XRDP_SOCKET_PATH=/run/xrdp/sockdir
+dbus-update-activation-environment: setting DISPLAY=:10.0
+dbus-update-activation-environment: setting UID=1000
+dbus-update-activation-environment: setting SHELL=/bin/bash
+dbus-update-activation-environment: setting XRDP_SESSION=1
+dbus-update-activation-environment: setting GPG_AGENT_INFO=/config/.gnupg/S.gpg-agent:0:1
+dbus-update-activation-environment: setting PWD=/config
+Obt-Message: Xinerama extension is not present on the server
+Openbox-Message: Unable to find a valid menu file "/var/lib/openbox/debian-menu.xml"
+QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-abc'
+Xsession: X session started for abc at Fri Jul 15 14:27:14 UTC 2022
+localuser:abc being added to access control list
+dbus-update-activation-environment: systemd --user not found, ignoring --systemd argument
+dbus-update-activation-environment: setting USER=abc
+dbus-update-activation-environment: setting HOME=/config
+dbus-update-activation-environment: setting XRDP_PULSE_SINK_SOCKET=xrdp_chansrv_audio_out_socket_10
+dbus-update-activation-environment: setting XRDP_PULSE_SOURCE_SOCKET=xrdp_chansrv_audio_in_socket_10
+dbus-update-activation-environment: setting DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-ABCXVr8kz8,guid=643ec45fe55c764657ad0f2d62d17942
+dbus-update-activation-environment: setting PULSE_SCRIPT=/etc/xrdp/pulse/default.pa
+dbus-update-activation-environment: setting LOGNAME=abc
+dbus-update-activation-environment: setting PATH=/sbin:/bin:/usr/bin:/usr/local/bin
+dbus-update-activation-environment: setting XRDP_SOCKET_PATH=/run/xrdp/sockdir
+dbus-update-activation-environment: setting DISPLAY=:10.0
+dbus-update-activation-environment: setting UID=1000
+dbus-update-activation-environment: setting SHELL=/bin/bash
+dbus-update-activation-environment: setting XRDP_SESSION=1
+dbus-update-activation-environment: setting GPG_AGENT_INFO=/config/.gnupg/S.gpg-agent:0:1
+dbus-update-activation-environment: setting PWD=/config
+Openbox-Message: Unable to find a valid menu file "/var/lib/openbox/debian-menu.xml"
+QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-abc'

@@ -41,6 +41,7 @@
 **config/deluge/plugins/.python-eggs/**
 **config/deluge/core
 **config/sodarr-chrome-plugin
+**config/jackett-indexarr
 **config/organizr/log/nginx
 **config/deluge/session.state
 **home**
