@@ -8,8 +8,10 @@
   <ApiKey>7d4c6788b05948a58f2423f6e795532b</ApiKey>
   <Branch>develop</Branch>
   <LaunchBrowser>True</LaunchBrowser>
-  <SslCertHash></SslCertHash>
   <UpdateMechanism>Docker</UpdateMechanism>
-  <AuthenticationMethod>None</AuthenticationMethod>
+  <AuthenticationMethod>Forms</AuthenticationMethod>
   <InstanceName>Sonarr</InstanceName>
+  <AuthenticationRequired>Enabled</AuthenticationRequired>
+  <SslCertPath></SslCertPath>
+  <SslCertPassword></SslCertPassword>
 </Config>

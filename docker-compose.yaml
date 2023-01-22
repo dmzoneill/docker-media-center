@@ -81,27 +81,28 @@ services:
     security_opt:
       - label:disable
     ports:
-      - 8112:8112 # deluge webui 
-      - 55555:55555 # deluge thin-client
-      - 3128:3128 # squid
-      - 8118:8118 # privoxy
-      - 6881:6881/udp # bittorrent
-      - 9091:9091 # transmission webui 
-      - 51413:51413 # transmission thin-client
-      - 9117:9117 # jacket
-      - 7878:7878 # radarr
-      - 7879:7879 # documentaries
-      - 8989:8989 # sonarr
-      - 8090:8090 # mylar3
-      - 8686:8686 # lidarr
-      - 6767:6767 # bazarr
-      - 8265:8265 # tdarr
-      - 8266:8266 # tdarr
-      - 8080:8080 # calibre
-      - 8081:8081 # calibre
+      - 8112:8112   # deluge webui 
+      - 55555:55555 # deluge thin-client    
+      - 3128:3128   # squid
+      - 8118:8118   # privoxy
+      - 9117:9117   # jacket
+      - 7878:7878   # radarr
+      - 8989:8989   # sonarr
+      - 8686:8686   # lidarr
+      - 6767:6767   # bazarr
+      - 8265:8265   # tdarr
+      - 8266:8266   # tdarr
       - 32400:32400 # plex
-      - 5299:5299 # librarian
-      - 8787:8787 #readarr
+      # - 9134:9134   # organizr
+      # - 8090:8090 # mylar3
+      # - 8080:8080 # calibre
+      # - 8081:8081 # calibre
+      # - 5299:5299 # librarian
+      # - 8787:8787 #readarr
+      # - 6881:6881/udp # bittorrent
+      # - 9091:9091 # transmission webui 
+      # - 51413:51413 # transmission thin-client
+      # - 7879:7879 # documentaries
     networks:
       - vpnnet
     command: '-f "" -d -r 192.168.0.0/24' # enable firewall and route local network traffic
@@ -172,34 +173,6 @@ services:
       - ./config/radarr:/config # config files
       - home:/data # home
 
-  readarr:
-    container_name: readarr
-    scale: 1
-    image: linuxserver/readarr:develop
-    env_file: .env
-    network_mode: service:vpn # run on host network namespace
-    volumes:
-      - ./config/readarr:/config
-      - downloads:/downloads # downloads folder
-      - books:/books # home
-    restart: unless-stopped
-
-  documentaries:
-    container_name: documentaries
-    scale: 1
-    image: linuxserver/radarr:nightly
-    restart: unless-stopped
-    network_mode: service:vpn # run on host network namespace
-    env_file: .env
-    volumes:
-      - downloads:/downloads # downloads folder
-      - series:/tv # tv shows folder
-      - movies:/movies # tv shows folder
-      - documentaries:/documentaries # documentaries
-      - music:/music # music
-      - ./config/documentaries:/config # config files
-      - home:/data # home
-
   privoxy:
     container_name: privoxy
     scale: 1
@@ -224,21 +197,21 @@ services:
       - ./config/squid/:/etc/squid # config files
       - home:/data # home
 
-  organizr:
-    container_name: organizr
-    scale: 1
-    image: organizr/organizr
-    restart: unless-stopped
-    network_mode: service:vpn # run on host network namespace
-    env_file: .env
-    volumes:
-      - downloads:/downloads # downloads folder
-      - series:/tv # tv shows folder
-      - movies:/movies # tv shows folder
-      - documentaries:/documentaries # documentaries
-      - music:/music # music
-      - ./config/organizr:/config # config files
-      - home:/data # home
+#  organizr:
+#    container_name: organizr
+#    scale: 1
+#    image: organizr/organizr
+#    restart: unless-stopped
+#    network_mode: service:vpn # run on host network namespace
+#    env_file: .env
+#    volumes:
+#      - downloads:/downloads # downloads folder
+#      - series:/tv # tv shows folder
+#      - movies:/movies # tv shows folder
+#      - documentaries:/documentaries # documentaries
+#      - music:/music # music
+#      - ./config/organizr:/config # config files
+#      - home:/data # home
 
   lidarr:
     container_name: lidarr
@@ -270,18 +243,6 @@ services:
       - music:/music # music
       - ./config/bazarr:/config
       - home:/data # home
-    restart: unless-stopped
-
-  lazylibrarian:
-    container_name: lazylibrarian
-    scale: 1
-    image: linuxserver/lazylibrarian
-    env_file: .env
-    network_mode: service:vpn # run on host network namespace
-    volumes:
-      - ./config/librarian:/config
-      - downloads:/downloads # downloads folder
-      - books:/books # home
     restart: unless-stopped
 
   mylar3:
@@ -362,70 +323,110 @@ services:
   #     - home:/data # home
   #   restart: unless-stopped
 
-  calibre:
-    container_name: calibre
-    scale: 0
-    image: ghcr.io/linuxserver/calibre
-    restart: unless-stopped
-    network_mode: service:vpn # run on host network namespace
-    env_file: .env    
-    volumes:
-      - downloads:/downloads # downloads folder
-      - series:/tv # tv shows folder
-      - movies:/movies # tv shows folder
-      - documentaries:/documentaries # documentaries
-      - music:/music # music
-      - ./config/calibre:/config
-      - home:/data # home
+  # calibre:
+  #   container_name: calibre
+  #   scale: 0
+  #   image: ghcr.io/linuxserver/calibre
+  #   restart: unless-stopped
+  #   network_mode: service:vpn # run on host network namespace
+  #   env_file: .env    
+  #   volumes:
+  #     - downloads:/downloads # downloads folder
+  #     - series:/tv # tv shows folder
+  #     - movies:/movies # tv shows folder
+  #     - documentaries:/documentaries # documentaries
+  #     - music:/music # music
+  #     - ./config/calibre:/config
+  #     - home:/data # home
 
-  transmission:
-    image: linuxserver/transmission
-    scale: 0
-    container_name: transmission
-    restart: unless-stopped
-    network_mode: service:vpn # run on host network namespace
-    env_file: .env
-    volumes:
-      - downloads:/downloads # downloads folder
-      - series:/tv # tv shows folder
-      - movies:/movies # tv shows folder
-      - documentaries:/documentaries # documentaries
-      - music:/music # music
-      - ./config/transmission:/config # config files
-      - home:/data # home
+  # transmission:
+  #   image: linuxserver/transmission
+  #   scale: 0
+  #   container_name: transmission
+  #   restart: unless-stopped
+  #   network_mode: service:vpn # run on host network namespace
+  #   env_file: .env
+  #   volumes:
+  #     - downloads:/downloads # downloads folder
+  #     - series:/tv # tv shows folder
+  #     - movies:/movies # tv shows folder
+  #     - documentaries:/documentaries # documentaries
+  #     - music:/music # music
+  #     - ./config/transmission:/config # config files
+  #     - home:/data # home
 
-  rutorrent:
-    container_name: rutorrent
-    scale: 0
-    image: linuxserver/rutorrent:latest
-    restart: unless-stopped
-    network_mode: service:vpn # run on the vpn network
-    env_file: .env
-    volumes:
-      - downloads:/downloads # downloads folder
-      - series:/tv # tv shows folder
-      - movies:/movies # tv shows folder
-      - documentaries:/documentaries # documentaries
-      - music:/music # music
-      - ./config/rutorrent:/config # config files
-      - home:/data # home
+  # rutorrent:
+  #   container_name: rutorrent
+  #   scale: 0
+  #   image: linuxserver/rutorrent:latest
+  #   restart: unless-stopped
+  #   network_mode: service:vpn # run on the vpn network
+  #   env_file: .env
+  #   volumes:
+  #     - downloads:/downloads # downloads folder
+  #     - series:/tv # tv shows folder
+  #     - movies:/movies # tv shows folder
+  #     - documentaries:/documentaries # documentaries
+  #     - music:/music # music
+  #     - ./config/rutorrent:/config # config files
+  #     - home:/data # home
 
-  tools:
-    container_name: tools
-    scale: 1
-    image: tools
-    env_file: .env
-    build:
-      context: ./config/tools
-    network_mode: service:vpn # run on host network namespace
-    volumes:
-      - downloads:/downloads # downloads folder
-      - series:/tv # tv shows folder
-      - movies:/movies # tv shows folder
-      - documentaries:/documentaries # documentaries
-      - music:/music # music
-      - ./config/tools:/tools
-      - ~/.local/share/gvfs-metadata:/root/.local/share/gvfs-metadata
-      - ~/.cache/thumbnails:/root/.cache/thumbnails   
-      - home:/data # home
-    restart: unless-stopped
+  # tools:
+  #   container_name: tools
+  #   scale: 1
+  #   image: tools
+  #   env_file: .env
+  #   build:
+  #     context: ./config/tools
+  #   network_mode: service:vpn # run on host network namespace
+  #   volumes:
+  #     - downloads:/downloads # downloads folder
+  #     - series:/tv # tv shows folder
+  #     - movies:/movies # tv shows folder
+  #     - documentaries:/documentaries # documentaries
+  #     - music:/music # music
+  #     - ./config/tools:/tools
+  #     - ~/.local/share/gvfs-metadata:/root/.local/share/gvfs-metadata
+  #     - ~/.cache/thumbnails:/root/.cache/thumbnails   
+  #     - home:/data # home
+  #   restart: unless-stopped
+
+  # lazylibrarian:
+  #   container_name: lazylibrarian
+  #   scale: 1
+  #   image: linuxserver/lazylibrarian
+  #   env_file: .env
+  #   network_mode: service:vpn # run on host network namespace
+  #   volumes:
+  #     - ./config/librarian:/config
+  #     - downloads:/downloads # downloads folder
+  #     - books:/books # home
+  #   restart: unless-stopped
+
+  # readarr:
+  #   container_name: readarr
+  #   scale: 1
+  #   image: linuxserver/readarr:develop
+  #   env_file: .env
+  #   network_mode: service:vpn # run on host network namespace
+  #   volumes:
+  #     - ./config/readarr:/config
+  #     - downloads:/downloads # downloads folder
+  #     - books:/books # home
+  #   restart: unless-stopped
+
+  # documentaries:
+  #   container_name: documentaries
+  #   scale: 1
+  #   image: linuxserver/radarr:nightly
+  #   restart: unless-stopped
+  #   network_mode: service:vpn # run on host network namespace
+  #   env_file: .env
+  #   volumes:
+  #     - downloads:/downloads # downloads folder
+  #     - series:/tv # tv shows folder
+  #     - movies:/movies # tv shows folder
+  #     - documentaries:/documentaries # documentaries
+  #     - music:/music # music
+  #     - ./config/documentaries:/config # config files
+  #     - home:/data # home

@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:kinetic
 RUN DEBIAN_FRONTEND=noninteractive dpkg --add-architecture i386
 RUN DEBIAN_FRONTEND=noninteractive apt update -y
 RUN DEBIAN_FRONTEND=noninteractive apt upgrade -y

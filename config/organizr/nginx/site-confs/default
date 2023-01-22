@@ -1,6 +1,6 @@
 # V0.0.5
 server {
-  listen 80 default_server;
+  listen 9134 default_server;
   root /config/www/organizr;
   index index.html index.htm index.php;
 

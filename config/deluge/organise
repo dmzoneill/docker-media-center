@@ -2,6 +2,7 @@
 
 exec &> >(tee /config/logs/organise-$1.log)
 
+date
 whoami
 export
 
