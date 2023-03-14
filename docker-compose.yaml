@@ -197,22 +197,6 @@ services:
       - ./config/squid/:/etc/squid # config files
       - home:/data # home
 
-#  organizr:
-#    container_name: organizr
-#    scale: 1
-#    image: organizr/organizr
-#    restart: unless-stopped
-#    network_mode: service:vpn # run on host network namespace
-#    env_file: .env
-#    volumes:
-#      - downloads:/downloads # downloads folder
-#      - series:/tv # tv shows folder
-#      - movies:/movies # tv shows folder
-#      - documentaries:/documentaries # documentaries
-#      - music:/music # music
-#      - ./config/organizr:/config # config files
-#      - home:/data # home
-
   lidarr:
     container_name: lidarr
     scale: 1
@@ -304,6 +288,15 @@ services:
       - ./config/traktarr:/traktarr
       - ./config/traktarr/config:/config
       - home:/data # home
+    restart: unless-stopped
+
+  cloudflare:
+    container_name: cloudflare
+    scale: 1
+    image: cloudflare/cloudflared:latest
+    env_file: .env
+    network_mode: host # run on host network namespace
+    command: tunnel --no-autoupdate run --token $CF_TOKEN 
     restart: unless-stopped
 
   # amd:
@@ -430,3 +423,20 @@ services:
   #     - music:/music # music
   #     - ./config/documentaries:/config # config files
   #     - home:/data # home
+  
+
+#  organizr:
+#    container_name: organizr
+#    scale: 1
+#    image: organizr/organizr
+#    restart: unless-stopped
+#    network_mode: service:vpn # run on host network namespace
+#    env_file: .env
+#    volumes:
+#      - downloads:/downloads # downloads folder
+#      - series:/tv # tv shows folder
+#      - movies:/movies # tv shows folder
+#      - documentaries:/documentaries # documentaries
+#      - music:/music # music
+#      - ./config/organizr:/config # config files
+#      - home:/data # home

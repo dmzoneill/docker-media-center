@@ -62,7 +62,9 @@ echo -e "Copy to work directory"
 echo -e "======================\n"
 
 mkdir -vp /downloads/work
-cp -rvf "$torrentpath/$torrentname" "$torrentpath/work/$torrentname"
+
+#cp -rvf "$torrentpath/$torrentname" "$torrentpath/work/$torrentname"
+cp -Rs "$torrentpath/$torrentname" "$torrentpath/work/$torrentname"
 
 echo -e "\n"
 echo -e "Filebot\n"
