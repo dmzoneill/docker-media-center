@@ -1,5 +1,6 @@
 import docker
 import sys
+from pprint import pprint
 
 client = docker.from_env()
 local_images = []
