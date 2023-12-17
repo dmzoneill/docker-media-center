@@ -14,4 +14,5 @@
   <AuthenticationRequired>Enabled</AuthenticationRequired>
   <SslCertPath></SslCertPath>
   <SslCertPassword></SslCertPassword>
+  <Theme>dark</Theme>
 </Config>

@@ -63,8 +63,16 @@ echo -e "======================\n"
 
 mkdir -vp /downloads/work
 
+symtorrentname=$(echo $torrentname | sed s#temp/##)
+symtorrentpath=$(echo $torrentpath | sed s#temp/##)
+
+echo $symtorrentname
+echo $symtorrentpath
+
+mkdir -vp "/downloads/work/$symtorrentname"
+
 #cp -rvf "$torrentpath/$torrentname" "$torrentpath/work/$torrentname"
-cp -Rs "$torrentpath/$torrentname" "$torrentpath/work/$torrentname"
+cp -Rs "$symtorrentpath/$symtorrentname" "/downloads/work/$symtorrentname/$symtorrentname"
 
 echo -e "\n"
 echo -e "Filebot\n"
@@ -73,15 +81,15 @@ echo -e "=======\n"
 if [ "$torrentlabel" == "tv-sonarr" ]; then
   defs="ut_label=TV"
   echo "filebot tv-sonarr" 2>&1
-  filebot -script /config/scripts/amc.groovy --output="/tv" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" seriesFormat="$seriesFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs 2>&1
+  filebot -script /config/scripts/amc.groovy --output="/tv" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" seriesFormat="$seriesFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="/downloads/work/$symtorrentname" ut_kind="multi" ut_title="$symtorrentname" $defs 2>&1
 elif [ "$torrentlabel" == "radarr" ]; then
   defs="ut_label=Movie"
   echo "filebot radarr" 2>&1
-  filebot -script /config/scripts/amc.groovy --output="/movies" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs 2>&1
+  filebot -script /config/scripts/amc.groovy --output="/movies" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="/downloads/work/$symtorrentname" ut_kind="multi" ut_title="$symtorrentname" $defs 2>&1
 elif [ "$torrentlabel" == "skip" ]; then
   defs=""
   echo "filebot unknown" 2>&1
-  filebot -script /config/scripts/amc.groovy --output="/downloads" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" seriesFormat="$seriesFormat" unsortedFormat="$unsortedFormat" unsorted=y subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="$torrentpath/work/$torrentname" ut_kind="multi" ut_title="$torrentname" $defs 2>&1
+  filebot -script /config/scripts/amc.groovy --output="/downloads" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" seriesFormat="$seriesFormat" unsortedFormat="$unsortedFormat" unsorted=y subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="/downloads/work/$symtorrentname" ut_kind="multi" ut_title="$torrentname" $defs 2>&1
 fi
 
 grep "\[COPY\]" $logfile >/dev/null 2>&1
@@ -102,6 +110,9 @@ echo -e "\n"
 timeout 30 bash /config/delete_old.sh
 
 echo -e "\n"
+timeout 30 bash /config/organise-delete-already-exists.sh
+
+echo -e "\n"
 timeout 30 bash /config/pause_completed_public_tracker.sh $torrentid
 timeout 30 bash /config/pause_completed_public_tracker.sh
 
@@ -115,7 +126,9 @@ chown -R default /config/*
 
 rm /config/*.bak
 
-rm -rvf "$torrentpath/work/$torrentname"
+rm -rvf "/downloads/work/$symtorrentname"
+
+curl -vvv http://127.0.0.1:32400/library/sections/all/refresh?X-Plex-Token=$PLEX_TOKEN
 
 killall -9 curl
 

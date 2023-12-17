@@ -6,11 +6,13 @@
   <Port>7878</Port>
   <UrlBase></UrlBase>
   <ApiKey>80d9fdfbc543445db90c5d53037651b8</ApiKey>
-  <AuthenticationMethod>None</AuthenticationMethod>
+  <AuthenticationMethod>Forms</AuthenticationMethod>
   <UpdateMechanism>Docker</UpdateMechanism>
   <SslPort>9898</SslPort>
   <LaunchBrowser>True</LaunchBrowser>
   <Branch>develop</Branch>
   <SslCertPassword></SslCertPassword>
   <InstanceName>Radarr</InstanceName>
+  <Theme>dark</Theme>
+  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
 </Config>

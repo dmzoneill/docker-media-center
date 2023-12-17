@@ -15,6 +15,13 @@ volumes:
       type: none
       device: /tv
 
+  anime:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /anime
+
   downloads:
     driver: local
     driver_opts:
@@ -236,7 +243,7 @@ services:
     network_mode: service:vpn # run on host network namespace
     volumes:
       - ./config/mylar3:/config
-      - /smb/series/Entertainment/Anime:/comics
+      - anime:/comics
       - downloads:/downloads # downloads folder
     restart: unless-stopped
     
