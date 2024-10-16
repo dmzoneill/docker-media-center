@@ -100,6 +100,7 @@ services:
       - 8265:8265   # tdarr
       - 8266:8266   # tdarr
       - 32400:32400 # plex
+      - 9696:9696
       # - 9134:9134   # organizr
       # - 8090:8090 # mylar3
       # - 8080:8080 # calibre
@@ -124,13 +125,13 @@ services:
       context: ./config/deluge
     env_file: .env
     volumes:
+      - ./config/deluge:/config # config files
+      - home:/data # home
       - downloads:/downloads # downloads folder
       - series:/tv # tv shows folder
       - movies:/movies # tv shows folder
       - documentaries:/documentaries # documentaries
       - music:/music # music
-      - ./config/deluge:/config # config files
-      - home:/data # home
 
   jackett:
     container_name: jackett
@@ -140,11 +141,6 @@ services:
     network_mode: service:vpn # run on host network namespace
     env_file: .env
     volumes:
-      - downloads:/downloads # downloads folder
-      - series:/tv # tv shows folder
-      - movies:/movies # tv shows folder
-      - documentaries:/documentaries # documentaries
-      - music:/music # music
       - ./config/jackett:/config # config files
       - home:/data # home
 
@@ -155,14 +151,11 @@ services:
     restart: unless-stopped
     network_mode: service:vpn # run on host network namespace
     env_file: .env
-    volumes:
-      - downloads:/downloads # downloads folder
-      - series:/tv # tv shows folder
-      - movies:/movies # tv shows folder
-      - documentaries:/documentaries # documentaries
-      - music:/music # music
+    volumes:      
       - ./config/sonarr:/config # config files
       - home:/data # home
+      - downloads:/downloads # downloads folder
+      - series:/tv # tv shows folder
 
   radarr:
     container_name: radarr
@@ -172,13 +165,10 @@ services:
     network_mode: service:vpn # run on host network namespace
     env_file: .env
     volumes:
-      - downloads:/downloads # downloads folder
-      - series:/tv # tv shows folder
-      - movies:/movies # tv shows folder
-      - documentaries:/documentaries # documentaries
-      - music:/music # music
       - ./config/radarr:/config # config files
       - home:/data # home
+      - downloads:/downloads # downloads folder
+      - movies:/movies # tv shows folder
 
   privoxy:
     container_name: privoxy
@@ -207,39 +197,51 @@ services:
   lidarr:
     container_name: lidarr
     scale: 1
-    image: lscr.io/linuxserver/lidarr
+    image: linuxserver/lidarr
     env_file: .env
     network_mode: service:vpn # run on host network namespace
     volumes:
-      - downloads:/downloads # downloads folder
-      - series:/tv # tv shows folder
-      - movies:/movies # tv shows folder
-      - documentaries:/documentaries # documentaries
-      - music:/music # music
       - ./config/lidarr:/config
       - home:/data # home
+      - downloads:/downloads # downloads folder
+      - music:/music # music
     restart: unless-stopped
     
+  prowlarr:
+    image: linuxserver/prowlarr:latest
+    scale: 1
+    container_name: prowlarr
+    env_file: .env
+    network_mode: service:vpn # run on host network namespace
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ./config/prowlarr:/config    
+      - home:/data # home  
+    restart: unless-stopped
+
   bazarr:
     container_name: bazarr
     scale: 0
-    image: lscr.io/linuxserver/bazarr
+    image: linuxserver/bazarr
     env_file: .env
     network_mode: service:vpn # run on host network namespace
     volumes:
+      - ./config/bazarr:/config
+      - home:/data # home
       - downloads:/downloads # downloads folder
       - series:/tv # tv shows folder
       - movies:/movies # tv shows folder
       - documentaries:/documentaries # documentaries
       - music:/music # music
-      - ./config/bazarr:/config
-      - home:/data # home
     restart: unless-stopped
 
   mylar3:
     container_name: mylar3
     scale: 1
-    image: lscr.io/linuxserver/mylar3
+    image: linuxserver/mylar3
     network_mode: service:vpn # run on host network namespace
     volumes:
       - ./config/mylar3:/config
@@ -254,13 +256,13 @@ services:
     env_file: .env
     network_mode: service:vpn # run on host network namespace
     volumes:
+      - ./config/tdarr:/config
+      - home:/data # home
       - downloads:/downloads # downloads folder
       - series:/tv # tv shows folder
       - movies:/movies # tv shows folder
       - documentaries:/documentaries # documentaries
       - music:/music # music
-      - ./config/tdarr:/config
-      - home:/data # home
     restart: unless-stopped     
 
   plex:
@@ -270,12 +272,12 @@ services:
     env_file: .env
     volumes:
       - ./config/plex:/config # config files
+      - home:/data # home
       - downloads:/downloads # downloads folder
       - series:/tv # tv shows folder
       - movies:/movies # tv shows folder
       - documentaries:/documentaries # documentaries
       - music:/music # music
-      - home:/data # home
     restart: unless-stopped
 
   traktarr:
@@ -287,14 +289,14 @@ services:
       context: ./config/traktarr
     network_mode: service:vpn # run on host network namespace
     volumes:
+      - ./config/traktarr:/traktarr
+      - ./config/traktarr/config:/config
+      - home:/data # home
       - downloads:/downloads # downloads folder
       - series:/tv # tv shows folder
       - movies:/movies # tv shows folder
       - documentaries:/documentaries # documentaries
       - music:/music # music
-      - ./config/traktarr:/traktarr
-      - ./config/traktarr/config:/config
-      - home:/data # home
     restart: unless-stopped
 
   cloudflare:

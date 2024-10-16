@@ -11,7 +11,7 @@
   <UpdateMechanism>Docker</UpdateMechanism>
   <AuthenticationMethod>Forms</AuthenticationMethod>
   <InstanceName>Sonarr</InstanceName>
-  <AuthenticationRequired>Enabled</AuthenticationRequired>
+  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
   <SslCertPath></SslCertPath>
   <SslCertPassword></SslCertPassword>
   <Theme>dark</Theme>

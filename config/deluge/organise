@@ -81,15 +81,15 @@ echo -e "=======\n"
 if [ "$torrentlabel" == "tv-sonarr" ]; then
   defs="ut_label=TV"
   echo "filebot tv-sonarr" 2>&1
-  filebot -script /config/scripts/amc.groovy --output="/tv" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" seriesFormat="$seriesFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="/downloads/work/$symtorrentname" ut_kind="multi" ut_title="$symtorrentname" $defs 2>&1
+  filebot -script /config/scripts/amc.groovy --output="/tv" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" seriesFormat="$seriesFormat" subtitles=en music=y artwork=y clean=y deleteAfterExtract=y ut_dir="/downloads/work/$symtorrentname" ut_kind="multi" ut_title="$symtorrentname" $defs 2>&1
 elif [ "$torrentlabel" == "radarr" ]; then
   defs="ut_label=Movie"
   echo "filebot radarr" 2>&1
-  filebot -script /config/scripts/amc.groovy --output="/movies" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="/downloads/work/$symtorrentname" ut_kind="multi" ut_title="$symtorrentname" $defs 2>&1
+  filebot -script /config/scripts/amc.groovy --output="/movies" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" subtitles=en music=y artwork=y clean=y deleteAfterExtract=y ut_dir="/downloads/work/$symtorrentname" ut_kind="multi" ut_title="$symtorrentname" $defs 2>&1
 elif [ "$torrentlabel" == "skip" ]; then
   defs=""
   echo "filebot unknown" 2>&1
-  filebot -script /config/scripts/amc.groovy --output="/downloads" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" seriesFormat="$seriesFormat" unsortedFormat="$unsortedFormat" unsorted=y subtitles=en extras=y music=y artwork=y clean=y deleteAfterExtract=y ut_dir="/downloads/work/$symtorrentname" ut_kind="multi" ut_title="$torrentname" $defs 2>&1
+  filebot -script /config/scripts/amc.groovy --output="/downloads" -no-xattr --action copy --conflict auto -non-strict --log-file $amclog --log INFO --def ignore="/downloads/temp/" movieFormat="$movieFormat" seriesFormat="$seriesFormat" unsortedFormat="$unsortedFormat" unsorted=y subtitles=en music=y artwork=y clean=y deleteAfterExtract=y ut_dir="/downloads/work/$symtorrentname" ut_kind="multi" ut_title="$torrentname" $defs 2>&1
 fi
 
 grep "\[COPY\]" $logfile >/dev/null 2>&1
@@ -121,8 +121,8 @@ echo -e "$SEP"
 
 chmod 666 $logfile
 
-chown -R default /downloads/*
-chown -R default /config/*
+chown -R deluge /downloads/*
+chown -R deluge /config/*
 
 rm /config/*.bak
 

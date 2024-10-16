@@ -56,12 +56,12 @@ class OrganiseMenu(MenuItem):
 
 
     def organise(self, hash, name, location):
-        cmd = "docker exec -it deluge su default -c \""
+        cmd = "docker exec -it deluge su ubuntu -c \""
         cmd += "cd /config/; ./organise " + hash + " '" + name  + "' '" + location + "'"
         cmd += "\""
         logging.debug(cmd + "\n")
         deluge_cmd = "cd /config/; ./organise '{hash}' '{name}' '{location}'".format(hash=hash, name=name, location=location)
-        docker_cmd = r"docker exec -it deluge su default -c \"{deluge_cmd}\"".format(deluge_cmd=deluge_cmd)
+        docker_cmd = r"docker exec -it deluge su ubuntu -c \"{deluge_cmd}\"".format(deluge_cmd=deluge_cmd)
         terminal_cmd = "konsole -e \"{docker_cmd}\"".format(docker_cmd=docker_cmd)
         logging.debug(terminal_cmd)
         os.system(terminal_cmd)

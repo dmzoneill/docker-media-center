@@ -35,7 +35,6 @@ RUN wget -qO - https://get.filebot.net/filebot/KEYS | apt-key add -
 RUN echo "deb [arch=amd64] https://get.filebot.net/deb/ universal main" >> /etc/apt/sources.list
 RUN DEBIAN_FRONTEND=noninteractive apt update -y
 RUN DEBIAN_FRONTEND=noninteractive apt install -y filebot
-RUN pip3 install requests plexapi
-RUN useradd -u 1000 default
-RUN sed 's#/home/default#/data#g' -i /etc/passwd
+RUN pip3 install requests plexapi --break-system-packages
+RUN sed 's#/home/ubuntu#/data#g' -i /etc/passwd
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]

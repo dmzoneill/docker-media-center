@@ -15,7 +15,7 @@
     }
   },
   "core": {
-    "debug": true
+    "debug": false
   },
   "filters": {
     "movies": {
@@ -23,13 +23,13 @@
       "allowed_languages": [],
       "blacklisted_genres": [],
       "blacklisted_max_runtime": 0,
-      "blacklisted_max_year": 2022,
+      "blacklisted_max_year": 2019,
       "blacklisted_min_runtime": 60,
       "blacklisted_min_year": 2000,
       "blacklisted_title_keywords": [],
       "blacklisted_tmdb_ids": [],
       "disabled_for": [],
-      "rotten_tomatoes": "75"
+      "rotten_tomatoes": ""
     },
     "shows": {
       "allowed_countries": [],
@@ -52,14 +52,14 @@
     "api_key": ""
   },
   "radarr": {
-    "api_key": "80d9fdfbc543445db90c5d53037651b8",
+    "api_key": "",
     "minimum_availability": "released",
     "quality": "HD-1080p",
     "root_folder": "/movies/",
     "url": "http://localhost:7878/"
   },
   "sonarr": {
-    "api_key": "7d4c6788b05948a58f2423f6e795532b",
+    "api_key": "",
     "language": "English",
     "quality": "HD-1080p",
     "root_folder": "/tv/",
@@ -68,7 +68,7 @@
     "url": "http://localhost:8989/"
   },
   "trakt": {
-    "client_id": "23df0f42cf0fb9f710e667742e18cfcb3726357db51bc72377523315cb677a9f",
-    "client_secret": "9aa36776b0f43b41deea20176d92dbf1a6b9fab1d533e2b00191f5dbd487d6ac"
+    "client_id": "",
+    "client_secret": ""
   }
 }

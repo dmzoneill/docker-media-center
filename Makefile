@@ -5,51 +5,70 @@ CWD := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
 WHOAMI := $(shell whoami)
 
+ifeq ($(dmc),)
+    $(error Please set the 'dmc' variable to either 'docker' or 'podman')
+endif
+
+ifeq ($(dmc),docker)
+    CONTAINER_TOOL = docker
+    COMPOSE_TOOL = docker-compose
+	COMPOSE_FILE = docker-compose.yaml
+	COMPOSE_ARGS = 
+else ifeq ($(dmc),podman)
+    CONTAINER_TOOL = podman
+    COMPOSE_TOOL = podman-compose
+	COMPOSE_FILE = podman-compose.yaml
+	COMPOSE_ARGS = --prod-args ' --uidmap "+1000:@1000" --gidmap "+g1000:1000"'
+else
+    $(error Invalid value for dmc. Use 'docker' or 'podman')
+endif
+
 clean-mounts:
 	- { \
 		for X in `mount | grep merged | awk '{print $3}'`; do \
 			sudo umount $$X; \
 		done \
 	}
+	sudo chown -R ${WHOAMI}:${WHOAMI} config/*
 
 build-images:
-	sudo chown -Rv ${WHOAMI}:${WHOAMI} config/deluge/*
-	- docker-compose build
+	- ${COMPOSE_TOOL} -f ${COMPOSE_FILE} build
 
 build: build-images clean-mounts
 
 up: build
-	sudo chown -Rv ${WHOAMI}:${WHOAMI} config/deluge/*
 	- cp sensitive/.env .env
 	cp -vf sensitive/Indexers/* ./config/jackett/Jackett/Indexers/
+	cp -vf sensitive/airvpn.conf config/vpn/
 	cp -vf sensitive/vpn.conf config/vpn/
-	docker-compose up -d
-	docker exec -it vpn /vpn/port-forward.sh
-	docker exec -it deluge /config/seedmage/seedmage.sh
+	${COMPOSE_TOOL} ${COMPOSE_ARGS} -f ${COMPOSE_FILE} up -d
+	${CONTAINER_TOOL} exec -it vpn /vpn/port-forward.sh
+	${CONTAINER_TOOL} exec -it deluge /config/seedmage/seedmage.sh
 	- cp sensitive/.env.template .env
-	@$(MAKE) -f $(THIS_FILE) filebot-update-opensubtitles
+	$(MAKE) -f ${THIS_FILE} filebot-update-opensubtitles
 	if [ ! -d "./home/.filebot" ]; then \
-		@$(MAKE) -f $(THIS_FILE) filebot-update-license; \
+		$(MAKE) -f ${THIS_FILE} filebot-update-license; \
 	fi
 
 filebot-update-license:
 	- cp sensitive/filebot.psm config/deluge/
-	- docker exec -it deluge su default -c "filebot --license /config/filebot.psm"
-	- docker exec -it deluge chmod 775 /root/.filebot
-	- docker exec -it deluge chown -R default:default /root/.filebot
+	- ${CONTAINER_TOOL} exec -it deluge su ubuntu -c "filebot --license /config/filebot.psm"
+	- ${CONTAINER_TOOL} exec -it deluge chmod 775 /data/.filebot
+	- ${CONTAINER_TOOL} exec -it deluge chown -R ubuntu:ubuntu /data/.filebot
 	- rm -f config/deluge/filebot.psm
 
 filebot-update-opensubtitles:
 	- cp sensitive/filebot-opensubtitles config/deluge/fbprefs.xml
-	- docker exec -it deluge su default -c "mkdir -vp /data/.java/.userPrefs/net/filebot/login/"
-	- docker exec -it deluge su default -c "cp -vf /config/fbprefs.xml /data/.java/.userPrefs/net/filebot/login/prefs.xml"
+	- ${CONTAINER_TOOL} exec -it deluge su ubuntu -c "mkdir -vp /data/.java/.userPrefs/net/filebot/login/"
+	- ${CONTAINER_TOOL} exec -it deluge su ubuntu -c "cp -vf /config/fbprefs.xml /data/.java/.userPrefs/net/filebot/login/prefs.xml"
 	- rm -f config/deluge/fbprefs.xml 
 
 down: 
-	docker-compose down
+	${COMPOSE_TOOL} -f ${COMPOSE_FILE} down
+	sudo chown -R ${WHOAMI}:${WHOAMI} config/*
 
 check:
-	docker-compose config
+	${COMPOSE_TOOL} -f ${COMPOSE_FILE} config
 
 clean: down
 	- sudo rm -rvf config/deluge/.cache
@@ -62,7 +81,7 @@ clean: down
 	- rm -rvf config/deluge/cookies.txt
 	- sudo find . -type d -name "__pycache__" -exec sudo rm -rf {} \;
 	- find config/deluge/seedmage/torrents/ -regextype posix-egrep -regex '.*/[0-9a-zA-Z]{40}\.torrent' -delete
-	- docker system prune -a -f
+	- ${CONTAINER_TOOL} system prune -a -f
 
 backup-diff:
 	- diff config/deluge/seedmage/seed_speed_file config/deluge/seedmage/seed_speed_file.bak
@@ -120,14 +139,14 @@ check-update:
 	}
 
 seedmage-reset:
-	- docker exec -it deluge killall -9 screen
-	- docker exec -it deluge screen -wipe
+	- ${CONTAINER_TOOL} exec -it deluge killall -9 screen
+	- ${CONTAINER_TOOL} exec -it deluge screen -wipe
 	- find config/deluge/seedmage/torrents/ -regextype posix-egrep -regex '.*/[0-9a-zA-Z]{40}\.torrent' -delete
 	- rm -rvf config/deluge/seedmage/state/*
-	- docker exec -it deluge /config/seedmage/seedmage.sh
+	- ${CONTAINER_TOOL} exec -it deluge /config/seedmage/seedmage.sh
 
 seedmage-attach:
-	- docker exec -it deluge screen -rd seedmage
+	- ${CONTAINER_TOOL} exec -it deluge screen -rd seedmage
 
 install-plugin:
 	- mkdir -vp ~/.config/deluge/plugins/

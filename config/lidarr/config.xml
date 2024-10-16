@@ -6,12 +6,12 @@
   <Port>8686</Port>
   <UrlBase></UrlBase>
   <ApiKey>771de60596e946f6b3e5e6f5fb6fd729</ApiKey>
-  <AuthenticationMethod>None</AuthenticationMethod>
+  <AuthenticationMethod>Forms</AuthenticationMethod>
   <UpdateMechanism>Docker</UpdateMechanism>
   <SslPort>6868</SslPort>
   <LaunchBrowser>True</LaunchBrowser>
   <Branch>master</Branch>
   <SslCertPassword></SslCertPassword>
   <InstanceName>Lidarr</InstanceName>
-  <AuthenticationRequired>Enabled</AuthenticationRequired>
+  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
 </Config>
