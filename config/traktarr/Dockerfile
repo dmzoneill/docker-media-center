@@ -1,4 +1,4 @@
-FROM python:3.7-alpine3.10
+FROM python:3.8-alpine3.10
 
 # Arguments for build tracking
 ARG BRANCH=
