@@ -1,0 +1,9 @@
+# Read by jscpd (gitignore syntax). Git does not use this file.
+# Vendored third-party trees are excluded from copy-paste detection.
+# First-party duplication is refactored into shared code instead.
+
+# Prowlarr Cardigann indexer definitions, vendored from Prowlarr/Indexers.
+config/prowlarr/Definitions/
+
+# Vendored copy of https://github.com/l3uddz/traktarr
+config/traktarr/

@@ -1,4 +1,4 @@
-FROM python:3.7-alpine3.10
+FROM python:3.8-alpine3.10
 
 # Arguments for build tracking
 ARG BRANCH=
@@ -12,19 +12,21 @@ ENV \
   TRAKTARR_CACHEFILE=/config/cache.db \
   TRAKTARR_LOGFILE=/config/traktarr.log
 
-RUN rm -rvf /${APP_DIR}
+RUN rm -rvf "/${APP_DIR:?}"
 COPY . /${APP_DIR}
 
-RUN echo "** BRANCH: ${BRANCH} COMMIT: ${COMMIT} **" 
-RUN echo "** Upgrade all packages **"
-RUN apk --no-cache -U upgrade
-RUN pip install --no-cache-dir --upgrade pip setuptools
-RUN ls -lia /${APP_DIR} && pip install --no-cache-dir --upgrade -r /${APP_DIR}/requirements.txt
+# pip 24.0 and setuptools 68.0.0 are the last releases that support Python 3.7.
+RUN echo "** BRANCH: ${BRANCH} COMMIT: ${COMMIT} **" \
+  && echo "** Upgrade all packages **" \
+  && apk --no-cache -U upgrade \
+  && pip install --no-cache-dir --upgrade pip==24.0 setuptools==68.0.0 \
+  && ls -lia "/${APP_DIR}" \
+  && pip install --no-cache-dir --upgrade -r "/${APP_DIR}/requirements.txt"
 
 # Change directory
 WORKDIR /${APP_DIR}
 
-RUN rm -rvf /${APP_DIR}
+RUN rm -rvf "/${APP_DIR:?}"
 
 # Entrypoint
 ENTRYPOINT ["python", "traktarr.py", "run"]
