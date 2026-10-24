@@ -162,7 +162,7 @@ TCP Ports
       - 7878:7878     # radarr
       - 7879:7879     # documentaries
       - 8989:8989     # sonarr
-      - 80.0.100       # organizr
+      - 80.0.110       # organizr
       - 8686:8686     # lidarr
       - 6767:6767     # bazarr
       - 8265:8265     # tdarr
