@@ -46,3 +46,5 @@
 **config/deluge/session.state
 **home**
 **/config/deluge/cookies.txt
+
+config/deluge/ssl/daemon.pkey
