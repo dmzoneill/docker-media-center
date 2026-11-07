@@ -1,5 +1,0 @@
-version: 2
-secret:
-  ignored-paths:
-    # Third-party Deluge plugin binary; the AKIA-shaped match is a false positive.
-    - config/deluge/plugins/ipstatus.egg
